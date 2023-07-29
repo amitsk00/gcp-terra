@@ -4,6 +4,10 @@
 my_venv/
 my_venv
 
+# Terraform files
+./.terraform
+.terraform.lock.hcl
+
 
 # below files will be ignores
 *.xls
@@ -13,6 +17,8 @@ my_venv
 test.py
 test.sh
 .dockerignore
+*.json
+
 
 
 

@@ -29,12 +29,12 @@ ROLES=(
   "iam.serviceAccountTokenCreator"
 )
 
-temp1=$(gcloud iam service-accounts list --format="value(email)")
+temp1=$(gcloud iam service-accounts list --filter="email:cicd"  --format="value(email)")
 if [[ "${temp1}" == "${SA_EMAIL}" ]]
 then
-    echo -e "SA ${SA_EMAIL} already created"
+    echo -e "${RED} SA ${SA_EMAIL} already created ${NC} "
 else
-    echo -e "SA ${SA_EMAIL} to be created "
+    echo -e "${GREEN} SA ${SA_EMAIL} to be created ${NC} "
     set -x
 
     gcloud iam service-accounts create ${ACCOUNT} \
@@ -70,6 +70,7 @@ do
         --role=roles/${ROLE} \
         --project=${PROJECT}
 done
+
 
 
 
