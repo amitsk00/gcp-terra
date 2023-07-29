@@ -16,10 +16,10 @@ data "google_project" "my_project" {
 
 
 
-# resource "google_compute_network" "vpc_network" {
-#   project = var.project_id
-#   name = "terraform-network"
-# }
+resource "google_compute_network" "vpc_network" {
+  project = var.project_id
+  name = "terraform-network"
+}
 
 
 resource "google_service_account" "default" {
@@ -43,10 +43,10 @@ resource "google_compute_instance" "default" {
     }
   }
 
-  // Local SSD disk
-  scratch_disk {
-    interface = "SCSI"
-  }
+  # // Local SSD disk
+  # scratch_disk {
+  #   interface = "SCSI"
+  # }
 
   network_interface {
     network = "default"

@@ -12,3 +12,12 @@ NC="\e[1;0m"
 echo -e "wiping off GCP setup" 
 echo "-----------------------------------------"
 
+
+
+echo -e "setting up terraform "
+terraform init
+
+
+echo -e "cleaning up all infra  ..."
+terraform destroy 
+

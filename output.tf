@@ -3,6 +3,6 @@ output "project_number" {
 }
 
 
-# output "ip" {
-#   value = google_compute_network.vpc_network.self_link
-# }
+output "ip" {
+  value = google_compute_network.vpc_network.self_link
+}

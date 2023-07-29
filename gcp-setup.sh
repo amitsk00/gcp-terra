@@ -62,23 +62,17 @@ else
         --iam-account=${SA_EMAIL}
 fi 
 
-for ROLE in ${ROLES[@]}
-do
-    echo -e "Assigning ${ROLE} to ${USER} on ${SA_EMAIL} " 
-    gcloud iam service-accounts add-iam-policy-binding ${SA_EMAIL} \
-        --member=user:${USER} \
-        --role=roles/${ROLE} \
-        --project=${PROJECT}
-done
+# for ROLE in ${ROLES[@]}
+# do
+#     echo -e "Assigning ${ROLE} to ${USER} on ${SA_EMAIL} " 
+#     gcloud iam service-accounts add-iam-policy-binding ${SA_EMAIL} \
+#         --member=user:${USER} \
+#         --role=roles/${ROLE} \
+#         --project=${PROJECT}
+# done
 
 
-
-
- 
-
-# CICD_SA="cicd-terra@ask-proj-25.iam.gserviceaccount.com"
-# export GOOGLE_IMPERSONATE_SERVICE_ACCOUNT=${CICD_SA}
-export GOOGLE_IMPERSONATE_SERVICE_ACCOUNT=${SA_EMAIL}
+# export GOOGLE_IMPERSONATE_SERVICE_ACCOUNT=${SA_EMAIL}
 
 
 
@@ -90,6 +84,6 @@ echo -e "getting the plan ..."
 terraform plan  --var-file=terraform.tfvars 
 
 
-# echo -e "setting up infra"
-# terraform apply  --var-file=terraform.tfvars 
+echo -e "setting up infra"
+terraform apply  --var-file=terraform.tfvars 
 
