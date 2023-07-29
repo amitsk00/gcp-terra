@@ -32,7 +32,7 @@ ROLES=(
 temp1=$(gcloud iam service-accounts list --filter="email:cicd"  --format="value(email)")
 if [[ "${temp1}" == "${SA_EMAIL}" ]]
 then
-    echo -e "SA ${SA_EMAIL} already created"
+    echo -e "${RED} SA ${SA_EMAIL} already created ${NC} "
 else
     echo -e "SA ${SA_EMAIL} to be created "
     set -x
