@@ -1,3 +1,15 @@
+
+locals {
+    json_sa_data = jsondecode(file("${path.module}/json-files/sa.json"))
+
+    json_sa1_data = jsondecode(file("${path.module}/json-files/sa1.json"))
+    all_sa = [for user in local.json_sa1_data.custom_sa : { (user.name) : (user.description) }]
+}
+
+output "sa_output" {
+  value = local.all_sa
+}
+
 # provider "google" {
 # #   credentials = file(var.credentials_file)
 
@@ -16,55 +28,17 @@ data "google_project" "my_project" {
 
 
 
-resource "google_compute_network" "vpc_network" {
-  project = var.project_id
-  name = "terraform-network"
-}
+# module "project-init" {
+#   source = "./tf-modules/project"
+
+#   project_id = var.project_id
+#   region = var.region
+#   zone = var.zone
+
+#   default_service_list = var.default_service_list
+#   service_list = var.service_list
+#   # sa_list = var.sa_list 
+#   sa_list = local.json_sa_data.my_sa_list 
+# }
 
 
-resource "google_service_account" "default" {
-  account_id   = "sa7899"
-  display_name = "Service Account"
-}
-
-resource "google_compute_instance" "default" {
-  name         = "test"
-  machine_type = "e2-medium"
-  zone         = "us-central1-a"
-
-  tags = ["foo", "bar"]
-
-  boot_disk {
-    initialize_params {
-      image = "debian-cloud/debian-11"
-      labels = {
-        my_label = "value"
-      }
-    }
-  }
-
-  # // Local SSD disk
-  # scratch_disk {
-  #   interface = "SCSI"
-  # }
-
-  network_interface {
-    network = "default"
-
-    access_config {
-      // Ephemeral public IP
-    }
-  }
-
-  metadata = {
-    foo = "bar"
-  }
-
-  metadata_startup_script = "echo hi > /test.txt"
-
-  service_account {
-    # Google recommends custom service accounts that have cloud-platform scope and permissions granted via IAM Roles.
-    email  = google_service_account.default.email
-    scopes = ["cloud-platform"]
-  }
-}
