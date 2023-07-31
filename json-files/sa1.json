@@ -1,0 +1,20 @@
+{
+    "custom_sa": [
+        {
+            "name": "custom-sa-1",
+            "description": "aaaaaaaaaaaa"
+        },
+        {
+            "name": "custom-sa-2",
+            "description": "bbbbbbbbbbbbb"
+        },
+        {
+            "name": "custom-sa-3",
+            "description": "cccccccccccccccc" 
+        },
+        {
+            "name": "custom-sa-4",
+            "description": "dddddddddddev"
+        }
+    ]
+}

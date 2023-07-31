@@ -27,7 +27,6 @@ data "google_project" "my_project" {
 }
 
 
-
 # module "project-init" {
 #   source = "./tf-modules/project"
 
