@@ -71,6 +71,15 @@ variable "default_service_list" {
 }
 
 
+variable "sa_list" {
+    type = list(string)
+    default = [
+        "test1234"  ,
+        "test-run" ,
+        "test-vm" 
+    ]
+}
+
 # variable "sa_list" {
 #     type = list(object({
 #         name = string ,
@@ -84,14 +93,14 @@ variable "default_service_list" {
 #     ]
 # }
 
-variable "sa_list" {
-    type = list(map)
-    default = [
-        {
-        "test1234" = "aaaaaaaa"
+# variable "sa_list" {
+#     type = list(map)
+#     default = [
+#         {
+#         "test1234" = "aaaaaaaa"
     
-        # "test-run" ,
-        # "test-vm" 
-        }
-    ]
-}
+#         # "test-run" ,
+#         # "test-vm" 
+#         }
+#     ]
+# }

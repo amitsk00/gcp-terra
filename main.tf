@@ -27,17 +27,17 @@ data "google_project" "my_project" {
 }
 
 
-# module "project-init" {
-#   source = "./tf-modules/project"
+module "project-init" {
+  source = "./tf-modules/project"
 
-#   project_id = var.project_id
-#   region = var.region
-#   zone = var.zone
+  project_id = var.project_id
+  region = var.region
+  zone = var.zone
 
-#   default_service_list = var.default_service_list
-#   service_list = var.service_list
-#   # sa_list = var.sa_list 
-#   sa_list = local.json_sa_data.my_sa_list 
-# }
+  default_service_list = var.default_service_list
+  service_list = var.service_list
+  sa_list = var.sa_list 
+  # sa_list = local.json_sa_data.my_sa_list 
+}
 
 
