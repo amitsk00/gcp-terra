@@ -24,6 +24,8 @@ resource "google_compute_firewall" "vpc1-icmp" {
   source_tags = ["fw-vpc1-icmp"]
 }
 
+
+
 resource "google_compute_firewall" "vpc1-ssh" {
   name    = "fw-vpc1-a-i-ssh"
   project = var.project_id
