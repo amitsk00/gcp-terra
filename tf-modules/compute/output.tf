@@ -1,4 +1,4 @@
-output "ip" {
-  value = google_compute_instance.vm_instance.network_interface.0.network_ip
+output "ip1" {
+  value = google_compute_instance.test1.network_interface.0.network_ip
 }
 

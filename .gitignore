@@ -5,7 +5,7 @@ my_venv/
 my_venv
 
 # Terraform files
-./.terraform
+./.terraform/*
 .terraform.lock.hcl
 
 
@@ -17,7 +17,7 @@ my_venv
 test.py
 test.sh
 .dockerignore
-*.json
+key.json
 
 
 

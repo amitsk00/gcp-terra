@@ -3,27 +3,29 @@ variable "project_id" {
 }
 
 variable "region" {
-  # default = "us-central1"
+  default = "us-central1"
   type    = string
 }
 
+variable "zone" {
+    type = string
+    description = "Zone name"
+    default = "us-central1-c"
+}
+
 variable "topic" {
-  # default = "activities"
+  default = "activities"
   type    = string
 }
 
 variable "function" {
-  # default = "pyPubTrig"
+  default = "pyPubTrig"
   type    = string
 }
 
-variable "function_sa" {
-  # default = "plutosa"
-  type    = string
-}
 
 variable "bucketsuffix" {
-  # default = "-bucket"
+  default = "-bucket"
   type    = string
 }
 
@@ -52,36 +54,42 @@ variable "asset_list_spanner" {
 
 
 
-variable "service_list" {
+variable "sa_core_viewer" {
+
+}
+
+
+
+variable "sa_list" {
     type = list(string)
     default = [
-      "cloudasset.googleapis.com",
-      "cloudbuild.googleapis.com",
-      "cloudfunctions.googleapis.com",
-      "containerregistry.googleapis.com",
-      "cloudresourcemanager.googleapis.com",
-      "iam.googleapis.com",
-      "pubsub.googleapis.com",
-      "sourcerepo.googleapis.com",
+        "test1234"  ,
+        "test-run" ,
+        "test-vm" 
     ]
 }
 
-variable "default_service_list" {
-    type = list(string)
-    default = [
-      "bigquery.googleapis.com",
-      "bigquerymigration.googleapis.com",
-      "bigquerystorage.googleapis.com",
-      "cloudapis.googleapis.com",
-      "clouddebugger.googleapis.com",
-      "cloudtrace.googleapis.com",
-      "logging.googleapis.com",
-      "monitoring.googleapis.com",
-      "servicemanagement.googleapis.com",
-      "serviceusage.googleapis.com",
-      "sql-component.googleapis.com",
-      "storage.googleapis.com",
-      "storage-api.googleapis.com",
-      "storage-component.googleapis.com"
-    ]
-}
+# variable "sa_list" {
+#     type = list(object({
+#         name = string ,
+#         description = string 
+#     }))
+#     default = [
+#         { "name" : "test1234" 
+#          "description" : "aaaaaaaa"
+#         } ,
+
+#     ]
+# }
+
+# variable "sa_list" {
+#     type = list(map)
+#     default = [
+#         {
+#         "test1234" = "aaaaaaaa"
+    
+#         # "test-run" ,
+#         # "test-vm" 
+#         }
+#     ]
+# }

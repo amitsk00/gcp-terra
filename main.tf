@@ -1,3 +1,15 @@
+
+# locals {
+#     json_sa_data = jsondecode(file("${path.module}/json-files/sa.json"))
+
+#     json_sa1_data = jsondecode(file("${path.module}/json-files/sa1.json"))
+#     all_sa = [for user in local.json_sa1_data.custom_sa : { (user.name) : (user.description) }]
+# }
+
+# output "sa_output" {
+#   value = local.all_sa
+# }
+
 # provider "google" {
 # #   credentials = file(var.credentials_file)
 
@@ -15,56 +27,63 @@ data "google_project" "my_project" {
 }
 
 
+module "project-init" {
+    source = "./tf-modules/project"
 
-# resource "google_compute_network" "vpc_network" {
-#   project = var.project_id
-#   name = "terraform-network"
-# }
+    project_id = var.project_id
+    region = var.region
+    zone = var.zone
 
-
-resource "google_service_account" "default" {
-  account_id   = "sa7899"
-  display_name = "Service Account"
+    sa_list = var.sa_list 
+    sa_core_viewer = var.sa_core_viewer
+    # sa_list = local.json_sa_data.my_sa_list 
 }
 
-resource "google_compute_instance" "default" {
-  name         = "test"
-  machine_type = "e2-medium"
-  zone         = "us-central1-a"
+module "project-api" {
+    source = "./tf-modules/api"
 
-  tags = ["foo", "bar"]
+    project_id = var.project_id
 
-  boot_disk {
-    initialize_params {
-      image = "debian-cloud/debian-11"
-      labels = {
-        my_label = "value"
-      }
-    }
-  }
+    default_service_list = var.default_service_list
+    service_list = var.service_list
 
-  // Local SSD disk
-  scratch_disk {
-    interface = "SCSI"
-  }
+}
 
-  network_interface {
-    network = "default"
 
-    access_config {
-      // Ephemeral public IP
-    }
-  }
+module "project-gcs" {
+    source = "./tf-modules/bucket"
 
-  metadata = {
-    foo = "bar"
-  }
+    project_id = var.project_id
+    first_suffix = var.first_suffix
+    gcs_loc_us = var.gcs_loc_us
+  
+}
 
-  metadata_startup_script = "echo hi > /test.txt"
 
-  service_account {
-    # Google recommends custom service accounts that have cloud-platform scope and permissions granted via IAM Roles.
-    email  = google_service_account.default.email
-    scopes = ["cloud-platform"]
-  }
+module "project-network" {
+    source = "./tf-modules/network"
+
+    project_id = var.project_id
+    cidr1 = var.cidr1 
+    region = var.region 
+    # vpc_name_1 
+    subnet_map = var.subnet_map
+
+    depends_on = [ module.project-api ]
+}
+
+module "project-vm" {
+    source = "./tf-modules/compute"
+
+    project_id = var.project_id
+    region = var.region
+    vm_name = var.vm_name
+    zone = var.zone
+    mac_type_e2m = var.mac_type_e2m
+    vm_image = var.vm_image 
+    # vpc_name = module.project-network.network1-selflink
+    subnet_name = module.project-network.subnet-us-central
+
+    depends_on = [ module.project-network ]
+  
 }
