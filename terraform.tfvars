@@ -35,3 +35,4 @@ mac_type_e2m            = "e2-medium"
 vm_name                 = "test123"
 vm_image                =  "debian-cloud/debian-11"
 
+
