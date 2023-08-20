@@ -21,3 +21,6 @@ terraform init
 echo -e "cleaning up all infra  ..."
 terraform destroy 
 
+echo -e "${GREEN} *** Waiting for 15 seconds so that all resources would be ready (or rather, destroyed) *** ${NC}"
+sleep 15
+

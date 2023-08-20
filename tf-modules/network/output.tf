@@ -10,3 +10,7 @@ output "network1-gw" {
 output "subnet1-gw" {
   value = google_compute_subnetwork.vpc1-us-central1.gateway_address
 }
+
+output "subnet-us-central" {
+  value = google_compute_subnetwork.vpc1-us-central1.name
+}

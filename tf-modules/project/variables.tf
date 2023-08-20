@@ -54,21 +54,10 @@ variable "asset_list_spanner" {
 
 
 
-variable "sa_generic" {
-  default = "gcp-25-core-viewer"
-  type    = string
-  description = "Generic SA created as VIEWER in the project"
-}
-
-variable "service_list" {
-    type = list(string)
+variable "sa_core_viewer" {
 
 }
 
-variable "default_service_list" {
-    type = list(string)
-
-}
 
 
 variable "sa_list" {

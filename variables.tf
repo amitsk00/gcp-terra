@@ -69,6 +69,16 @@ variable "default_service_list" {
     ]
 }
 
+
+
+# SA related
+
+variable "sa_core_viewer" {
+  default = "gcp-25-core-viewer"
+  type    = string
+  description = "Generic SA created as VIEWER in the project"
+}
+
 variable "sa_list" {
     type = list(string)
     default = [
@@ -103,3 +113,89 @@ variable "sa_list" {
 #         }
 #     ]
 # }
+
+
+
+
+
+
+# GCS related
+
+variable "first_suffix"{
+    type    = string 
+    default = "xxx"
+}
+
+variable "gcs_loc_us" {
+    type    = string
+    default = "US`"
+}
+
+
+
+# VPC
+
+# variable "vpc_name_1" {
+#     type = string
+#     description = "Name of 1st VPC"
+# }
+
+variable "cidr1" {
+    type    = string
+}
+
+variable "subnet_map" {
+    description = "The list of subnet values"
+
+    type = map(object({
+     name = string ,
+     cidr = string ,
+     region = string
+    }))
+
+    default = {
+        "sub1" = {
+         name = "subnet01"
+         cidr = "10.1.0.0/16" 
+         region = "us-central1"
+      
+        }
+         "sub2" = {
+         name = "subnet02"
+         cidr = "10.2.0.0/16"
+         region = "us-east4"
+        }
+    }
+}
+
+
+# GCE
+
+variable "mac_type_e2m" {
+    type = string
+    default = "e2-medium"
+    description = "VM's machine type"
+}
+
+variable "vm_name" {
+    type = string
+    description = "Name of the VM"
+}
+
+variable "vm_image" {
+    type = string
+    description = "Image for VM"
+    default = "debian-cloud/debian-11"
+  
+}
+
+# variable "vpc_name" {
+#     type = string
+#     default = "DUMMY"
+# }
+
+variable "subnet_name" {
+    type = string
+    default = "DUMMY"
+}
+

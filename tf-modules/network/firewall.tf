@@ -1,11 +1,4 @@
-# VPC network
 
-resource "google_compute_network" "vpc1" {
-  project = var.project_id
-  name = "network-1"
-  auto_create_subnetworks = false
-  mtu                     = 1460
-}
 
 
 # Firewalls
@@ -22,6 +15,8 @@ resource "google_compute_firewall" "vpc1-icmp" {
   }
 
   source_tags = ["fw-vpc1-icmp"]
+
+  depends_on = [ google_compute_network.vpc1 ]
 }
 
   
@@ -38,6 +33,8 @@ resource "google_compute_firewall" "vpc1-ssh" {
   }
 
   source_tags = ["fw-vpc1-ssh"]
+
+  depends_on = [ google_compute_network.vpc1 ]
 }
 
 resource "google_compute_firewall" "vpc1-http" {
@@ -53,6 +50,8 @@ resource "google_compute_firewall" "vpc1-http" {
   }
 
   source_tags = ["fw-vpc1-http"]
+
+  depends_on = [ google_compute_network.vpc1 ]
 }
 
 resource "google_compute_firewall" "vpc1-https" {
@@ -68,6 +67,8 @@ resource "google_compute_firewall" "vpc1-https" {
   }
 
   source_tags = ["fw-vpc1-https"]
+
+  depends_on = [ google_compute_network.vpc1 ]
 }
 
 resource "google_compute_firewall" "vpc1-ubuntu" {
@@ -86,32 +87,9 @@ resource "google_compute_firewall" "vpc1-ubuntu" {
   }
 
   source_tags = ["fw-vpc1-ubuntu"]
-}
 
-
-
-
-
-## SUbnets
-
-resource "google_compute_subnetwork" "vpc1-us-central1" {
-  name          = "subnet-vpc1-central1"
-  ip_cidr_range = "10.2.0.0/16"
-  region        = "us-central1"
-  network       = google_compute_network.vpc1.id
-  private_ip_google_access = true 
-
-  secondary_ip_range {
-    # range_name    = "tf-test-secondary-range-update1"
-    # ip_cidr_range = "192.168.10.0/24"
-  }
-
-  log_config {
-    aggregation_interval = "INTERVAL_15_MIN"
-    flow_sampling        = 0.1
-    metadata             = "INCLUDE_ALL_METADATA"
-  }
-
+  depends_on = [ google_compute_network.vpc1 ]
+  
 }
 
 

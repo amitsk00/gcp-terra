@@ -7,40 +7,26 @@ data "google_project" "my_project" {
 
 
 
-## GCP APIs
-
-
-resource "google_project_service" "gcp_services_enable_default" {
-  project = var.project_id
-  for_each = toset(var.default_service_list)
-  service = each.key
-  disable_on_destroy = false
-}
-resource "google_project_service" "gcp_services_enable" {
-  project = var.project_id
-  for_each = toset(var.service_list)
-  service = each.key
-  disable_on_destroy = false
-}
 
 
 
-## Service Account setup as VIEWER - TEST only
 
-resource "google_service_account" "service_account" {
-  account_id   = var.sa_generic
+## Service Account setup as VIEWER only
+
+resource "google_service_account" "sa_core_viewer" {
+  account_id   = var.sa_core_viewer
 
 }
 
 resource "google_project_iam_member" "sa_core-viewer-binding" {
   project       = var.project_id
   role          = "roles/viewer"
-  member        = "serviceAccount:${google_service_account.service_account.email}"
+  member        = "serviceAccount:${google_service_account.sa_core_viewer.email}"
 }
 
 
 
-# creating as generic SA
+# creating SA from list 
 resource "google_service_account" "custom_sa" {
   project       = var.project_id
   for_each = toset(var.sa_list)
