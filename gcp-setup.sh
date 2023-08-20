@@ -107,7 +107,7 @@ fi
 
 if [[ "${SUCCESS}" -eq "1"  ]]
 then
-    echo -e "${GREEN} *** Waiting for 15 seconds so that all resources would be ready *** ${NC}"
+    echo -e "${GREEN} **** Waiting for 15 seconds so that all resources would be ready *** ${NC}"
     sleep 15
 fi
 
