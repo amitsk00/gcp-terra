@@ -199,3 +199,9 @@ variable "subnet_name" {
     default = "DUMMY"
 }
 
+variable "sa_mail" {
+    type = string
+    description = "SA for VM"
+    default = "XXX"
+}
+

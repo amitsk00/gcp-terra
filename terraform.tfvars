@@ -7,6 +7,12 @@ zone                    = "us-central1-c"
 
 
 sa_core_viewer          = "gcp-25-core-viewer"
+sa_list                 = [
+                        "test1234"  ,
+                        "test-run" ,
+                        "test-vm" 
+                        ]
+
 
 
 ## GCS

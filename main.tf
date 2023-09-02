@@ -22,6 +22,11 @@
 #   create_duration = "30s"
 # }
 
+
+
+
+
+
 data "google_project" "my_project" {
     project_id = var.project_id
 }
@@ -38,6 +43,7 @@ module "project-init" {
     sa_core_viewer = var.sa_core_viewer
     # sa_list = local.json_sa_data.my_sa_list 
 }
+
 
 module "project-api" {
     source = "./tf-modules/api"
@@ -72,6 +78,7 @@ module "project-network" {
     depends_on = [ module.project-api ]
 }
 
+
 module "project-vm" {
     source = "./tf-modules/compute"
 
@@ -81,8 +88,13 @@ module "project-vm" {
     zone = var.zone
     mac_type_e2m = var.mac_type_e2m
     vm_image = var.vm_image 
+
     # vpc_name = module.project-network.network1-selflink
-    subnet_name = module.project-network.subnet-us-central
+    subnet_name = module.project-network.subnet-default
+
+    sa_mail = module.project-init.email_core_viewer
+    sa_list = var.sa_list 
+
 
     depends_on = [ module.project-network ]
   

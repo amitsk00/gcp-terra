@@ -37,3 +37,12 @@ variable "vm_image" {
 variable "subnet_name" {
     type = string
 }
+
+variable "sa_mail" {
+    type = string
+    description = "SA for VM"
+}
+
+variable "sa_list" {
+    type = list(string)
+}

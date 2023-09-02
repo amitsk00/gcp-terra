@@ -32,6 +32,6 @@ resource "google_service_account" "custom_sa" {
   for_each = toset(var.sa_list)
   account_id   = each.key
   # description =   "Service Account"
-  description = each.value
+  description = each.key 
 }
 
