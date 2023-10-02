@@ -2,7 +2,9 @@ output "project_number" {
     value = data.google_project.my_project.number
 }
 
-
+output "sa_vm" {
+    value = module.project-init.sa_vm
+}
 
 # GCS
 
@@ -10,8 +12,8 @@ output "project_number" {
 #     value = module.project-gcs.first_self_link
 # }
 
-output "first_url" {
-    value = module.project-gcs.first_url       
+output "first_bucket_url" {
+    value = module.project-gcs.first_bucket_url       
 }
 
 # output "custom_self_link" {
@@ -32,6 +34,10 @@ output vpc1 {
     value = module.project-network.network1-selflink
 }
 
+output subnet-default {
+    value = module.project-network.subnet-default
+}
+
 
 # VM
 
@@ -41,3 +47,10 @@ output vm_ip1 {
 
 
 
+
+
+# TEST
+
+output "zone_list" {
+  value = module.project-vm.zone_list
+}

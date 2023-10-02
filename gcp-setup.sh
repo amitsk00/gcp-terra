@@ -8,12 +8,24 @@ YELLOW="\e[1;33m"
 BLUE="\e[1;34m"
 NC="\e[1;0m"
 
+LINE_SEP="\n\n"
+PREFIX=" >>> "
+
+
+if [[ -f ./params.sh ]]; then
+    echo -e "params file is present"
+    source ./params.sh
+    envsubst < terraform-template.tfvars > terraform.tfvars
+else 
+    echo -e "params file is missig - create the file and run again"
+    exit 25
+fi 
+
+
+
 
 echo -e "${BLUE}Starting GCP setup ${NC}" 
 echo "-----------------------------------------"
-# gcloud config list 
-# echo "-----------------------------------------"
-
 
 
 USER=$(gcloud config list --format="value(core.account)")
@@ -32,82 +44,112 @@ ROLES=(
 temp1=$(gcloud iam service-accounts list --filter="email:cicd"  --format="value(email)")
 if [[ "${temp1}" == "${SA_EMAIL}" ]]
 then
-    echo -e "${YELLOW}  SA ${SA_EMAIL} already created ${NC} "
+    echo -e "${PREFIX}${YELLOW}SA ${SA_EMAIL} already created ${NC} "
 else
-    echo -e "${BLUE}    SA ${SA_EMAIL} to be created ${NC} "
-    set -x
+    echo -e "${PREFIX}${BLUE}SA ${SA_EMAIL} to be created ${NC} "
 
     gcloud iam service-accounts create ${ACCOUNT} \
         --project=${PROJECT} \
         --display-name="${DISPLAY_NAME}" \
         --description="${DESCR}"
 
-    gcloud projects add-iam-policy-binding ${PROJECT} \
-        --project=${PROJECT} \
-        --member=serviceAccount:${SA_EMAIL} \
-        --role=roles/owner 
-
-    set +x 
 fi         
+
+gcloud projects add-iam-policy-binding ${PROJECT} \
+    --project=${PROJECT} \
+    --member=serviceAccount:${SA_EMAIL} \
+    --role=roles/owner 
+
 
  
 MYDIR=$(dirname "$0")
 # Use sparingly 
 if [[ -f "${MYDIR}/key.json" ]]
 then 
-    echo -e "${YELLOW}  Skipping key creation ..."
+    echo -e "${PREFIX}${YELLOW}Skipping key creation ... ${NC}"
 else 
-    echo -e "${YELLOW}  key being created ... ${NC}"
+    echo -e "${PREFIX}${YELLOW}SA key being created ... ${NC}"
     gcloud iam service-accounts keys create ${MYDIR}/key.json \
         --project=${PROJECT} \
         --iam-account=${SA_EMAIL}
 fi 
 
-# for ROLE in ${ROLES[@]}
-# do
-#     echo -e "Assigning ${ROLE} to ${USER} on ${SA_EMAIL} " 
-#     gcloud iam service-accounts add-iam-policy-binding ${SA_EMAIL} \
-#         --member=user:${USER} \
-#         --role=roles/${ROLE} \
-#         --project=${PROJECT}
-# done
+
+# create main bucket 
+
+GCS_MAIN="${PROJECT}-main"
+GCS_MAIN="gs://${GCS_MAIN}"
+gcloud storage buckets describe ${GCS_MAIN} >/dev/null 2>&1
+retGcs=$?
+
+if [[ "${retGcs}" -eq  "0"  ]]
+then
+    echo -e "${PREFIX}${YELLOW}Main/default Bucket exists${NC}"
+else
+    echo -e "${PREFIX}${RED}Main/default Bucket doesn't exist, will be created now${NC}"
+    gcloud storage buckets create ${GCS_MAIN}
+fi 
+
+# Adding roles for SA
+
+for ROLE in ${ROLES[@]}
+do
+    echo -e "Assigning ${ROLE} to ${USER} on ${SA_EMAIL} " 
+    gcloud iam service-accounts add-iam-policy-binding ${SA_EMAIL} \
+        --member=user:${USER} \
+        --role=roles/${ROLE} \
+        --project=${PROJECT}
+done
 
 
+
+
+
+
+# Set SA for Terraform
 export GOOGLE_IMPERSONATE_SERVICE_ACCOUNT=${SA_EMAIL}
 
 
 
-echo -e "\n\nSetting up terraform "
+echo -e "${LINE_SEP}Setting up terraform "
 terraform init
 
 SUCCESS="0"
 
-echo -e "getting the plan ..."
+echo -e "${PREFIX}getting the plan ..."
 terraform plan  --var-file=terraform.tfvars  --out=my_terra_plan 
+retCdPlan="$?"
+echo $retCdPlan
 
-
-cdPlan="$?"
-echo -e ${cdPlan}
-if [[ "${cdPlan}" -gt "0" ]]
+if [[ "${retCdPlan}" -gt "0" ]]
 then
     echo -e "${RED}Terraform Plan returned errors, correct them first to proceed ahead  ${NC}"
 else
-    echo -e "setting up infra"
-    terraform apply  --var-file=terraform.tfvars 
-    if [[ "${?}" -gt "0" ]]
-    then
-        echo -e "${RED}Terraform Apply returned errors  ${NC}"
+    echo -e "${LINE_SEP}"
+    read -p "Do you want to proceed as per above plan? (y/n) -" myReply
+    
+    if [[ "$myReply" == "y" ]]
+    then 
+        echo -e "setting up infra"
 
-    else
-        echo -e "${GREEN} GCP Infra setup completed successfully ${NC}" 
-        SUCCESS="1"
-    fi
+        terraform apply  my_terra_plan 
+        if [[ "${?}" -gt "0" ]]
+        then
+            echo -e "${RED}Terraform Apply returned errors  ${NC}"
+
+        else
+            echo -e "${GREEN} GCP Infra setup completed successfully ${NC}" 
+            SUCCESS="1"
+        fi
+    else 
+        echo -e "${BLUE}Cancelled by user input ..."
+    fi 
     
 fi 
 
 if [[ "${SUCCESS}" -eq "1"  ]]
 then
-    echo -e "${GREEN} **** Waiting for 15 seconds so that all resources would be ready *** ${NC}"
+    echo -e "${LINE_SEP}${GREEN} **** Waiting for 15 seconds so that all resources would be ready *** ${NC}"
     sleep 15
 fi
 
