@@ -8,17 +8,10 @@ output "sa_vm" {
 
 # GCS
 
-# output "first_self_link" {
-#     value = module.project-gcs.first_self_link
-# }
-
 output "first_bucket_url" {
     value = module.project-gcs.first_bucket_url       
 }
 
-# output "custom_self_link" {
-#     value = module.project-gcs.custom_self_link
-# }
 
 output "custom_url" {
     value = module.project-gcs.custom_url
@@ -27,6 +20,8 @@ output "custom_url" {
 output "sa-core-view" {
     value = module.project-init.email_core_viewer
 }
+
+
 
 
 # VPC
@@ -39,18 +34,26 @@ output subnet-default {
 }
 
 
+
+
 # VM
 
-output vm_ip1 {
-    value = module.project-vm.ip1
+output nic0_ip1 {
+    value = module.project-vm.nic0_ip1
 }
-
-
-
-
-
-# TEST
 
 output "zone_list" {
   value = module.project-vm.zone_list
 }
+
+output "mig_zonal" {
+    value = module.project-vm.mig_zonal
+}
+
+output "mig_regional" {
+    value = module.project-vm.mig_regional
+}
+
+
+
+# TEST

@@ -22,6 +22,7 @@ resource "google_compute_disk" "foobar" {
 resource "google_compute_instance_template" "lb-mig-tmpl" {
     name        = "vm-tmpl-lb1"
     description = "This template is used to create MIG as backend for LB."
+    # count = 2 
 
     tags = ["foo", "bar"]
 
@@ -146,10 +147,6 @@ resource "google_compute_instance_group_manager" "appserver_zonal" {
 }
 
 
-output "zone_list" {
-    value = "${local.distribution_zones["default"][0]}"
-} 
-
 
 
 resource "google_compute_region_instance_group_manager" "appserver_regional" {
@@ -192,7 +189,7 @@ resource "google_compute_region_instance_group_manager" "appserver_regional" {
         minimal_action                 = "REPLACE"
         most_disruptive_allowed_action = "REPLACE"
         max_surge_percent              = 0
-        max_unavailable_fixed          = 0
+        # max_unavailable_fixed          = 0
         min_ready_sec                  = 50
         replacement_method             = "RECREATE"
     }

@@ -42,6 +42,8 @@ module "project-init" {
     sa_list = var.sa_list 
     sa_core_viewer = var.sa_core_viewer
     # sa_list = local.json_sa_data.my_sa_list 
+
+    cicd_terra = var.cicd_terra
 }
 
 
@@ -106,3 +108,6 @@ module "project-vm" {
     depends_on = [ module.project-network ]
   
 }
+
+
+

@@ -12,14 +12,6 @@ LINE_SEP="\n\n"
 PREFIX=" >>> "
 
 
-if [[ -f ./params.sh ]]; then
-    echo -e "params file is present"
-    source ./params.sh
-    envsubst < terraform-template.tfvars > terraform.tfvars
-else 
-    echo -e "params file is missig - create the file and run again"
-    exit 25
-fi 
 
 
 
@@ -34,7 +26,20 @@ PROJECT="ask-proj-25"
 ACCOUNT="cicd-terra"
 DESCR="CICD account using Terraform for IaC"
 SA_EMAIL="${ACCOUNT}@${PROJECT}.iam.gserviceaccount.com"
+export CICD_TERRA_SA=${SA_EMAIL}
 DISPLAY_NAME="CICD for Terraform"
+
+
+if [[ -f ./params.sh ]]; then
+    echo -e "params file is present"
+    source ./params.sh
+    envsubst < terraform-template.tfvars > terraform.tfvars
+else 
+    echo -e "params file is missig - create the file and run again"
+    exit 25
+fi 
+
+
 
 ROLES=(
   "iam.serviceAccountUser"
@@ -58,7 +63,7 @@ fi
 gcloud projects add-iam-policy-binding ${PROJECT} \
     --project=${PROJECT} \
     --member=serviceAccount:${SA_EMAIL} \
-    --role=roles/owner 
+    --role=roles/owner >/dev/null 
 
 
  
@@ -71,7 +76,7 @@ else
     echo -e "${PREFIX}${YELLOW}SA key being created ... ${NC}"
     gcloud iam service-accounts keys create ${MYDIR}/key.json \
         --project=${PROJECT} \
-        --iam-account=${SA_EMAIL}
+        --iam-account=${SA_EMAIL} 
 fi 
 
 
@@ -90,16 +95,16 @@ else
     gcloud storage buckets create ${GCS_MAIN}
 fi 
 
-# Adding roles for SA
+# # Adding SA access to amit
 
-for ROLE in ${ROLES[@]}
-do
-    echo -e "Assigning ${ROLE} to ${USER} on ${SA_EMAIL} " 
-    gcloud iam service-accounts add-iam-policy-binding ${SA_EMAIL} \
-        --member=user:${USER} \
-        --role=roles/${ROLE} \
-        --project=${PROJECT}
-done
+# for ROLE in ${ROLES[@]}
+# do
+#     echo -e "Assigning ${ROLE} to ${USER} on ${SA_EMAIL} " 
+#     gcloud iam service-accounts add-iam-policy-binding ${SA_EMAIL} \
+#         --member=user:${USER} \
+#         --role=roles/${ROLE} \
+#         --project=${PROJECT} >/dev/null
+# done
 
 
 
@@ -119,16 +124,15 @@ SUCCESS="0"
 echo -e "${PREFIX}getting the plan ..."
 terraform plan  --var-file=terraform.tfvars  --out=my_terra_plan 
 retCdPlan="$?"
-echo $retCdPlan
 
 if [[ "${retCdPlan}" -gt "0" ]]
 then
     echo -e "${RED}Terraform Plan returned errors, correct them first to proceed ahead  ${NC}"
 else
     echo -e "${LINE_SEP}"
-    read -p "Do you want to proceed as per above plan? (y/n) -" myReply
+    read -p "Do you want to proceed as per above plan? (yes/no) - " myReply
     
-    if [[ "$myReply" == "y" ]]
+    if [[ "$myReply" == "yes" ]]
     then 
         echo -e "setting up infra"
 

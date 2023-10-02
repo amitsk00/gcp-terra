@@ -5,7 +5,7 @@ project_id                 = "${PROJECT_ID}"
 region                  = "${REGION}"
 zone                    = "${ZONE}"
 
-
+cicd_terra              = "${CICD_TERRA_SA}"
 sa_core_viewer          = "${CORE_VIEWER}"
 sa_list                 = [
                         "test1234"  ,

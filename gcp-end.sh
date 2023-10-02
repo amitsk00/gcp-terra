@@ -9,6 +9,22 @@ BLUE="\e[1;34m"
 NC="\e[1;0m"
 
 
+PROJECT="ask-proj-25"
+ACCOUNT="cicd-terra"
+SA_EMAIL="${ACCOUNT}@${PROJECT}.iam.gserviceaccount.com"
+export CICD_TERRA_SA=${SA_EMAIL}
+
+if [[ -f ./params.sh ]]; then
+    echo -e "params file is present"
+    source ./params.sh
+    envsubst < terraform-template.tfvars > terraform.tfvars
+else 
+    echo -e "params file is missig - create the file and run again"
+    exit 25
+fi 
+
+
+
 echo -e "wiping off GCP setup" 
 echo "-----------------------------------------"
 

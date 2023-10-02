@@ -59,6 +59,11 @@ variable "sa_core_viewer" {
 }
 
 
+variable "cicd_terra" {
+    type    = string
+    description = "CICD SA created to be used for Terraform"
+}
+
 
 variable "sa_list" {
     type = list(string)

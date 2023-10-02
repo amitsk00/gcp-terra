@@ -28,10 +28,29 @@ resource "google_project_iam_member" "sa_core-viewer-binding" {
 
 # creating SA from list 
 resource "google_service_account" "custom_sa" {
-  project       = var.project_id
-  for_each = toset(var.sa_list)
-  account_id   = each.key
-  # description =   "Service Account"
-  description = each.key 
+    project       = var.project_id
+    for_each = toset(var.sa_list)
+    account_id   = each.key
+    # description =   "Service Account"
+    description = each.key 
 }
 
+resource "google_service_account_iam_binding" "cicd_binding1" {
+    # service_account_id = google_service_account.sa.name
+    # for_each = toset(google_service_account.custom_sa.name)
+    # service_account_id = each.value
+    for_each = google_service_account.custom_sa
+    service_account_id = each.value.id 
+    role               = "roles/iam.serviceAccountUser"
+    members = ["serviceAccount:${var.cicd_terra}"]
+}
+
+resource "google_service_account_iam_binding" "cicd_binding2" {
+    # service_account_id = google_service_account.sa.name
+    # for_each = toset(google_service_account.custom_sa.name)
+    # service_account_id = each.value
+    for_each = google_service_account.custom_sa
+    service_account_id = each.value.id 
+    role               = "roles/iam.serviceAccountTokenCreator"
+    members = ["serviceAccount:${var.cicd_terra}"]
+}

@@ -5,7 +5,7 @@ project_id                 = "ask-proj-25"
 region                  = "us-central1"
 zone                    = "us-central1-c"
 
-
+cicd_terra              = "cicd-terra@ask-proj-25.iam.gserviceaccount.com"
 sa_core_viewer          = "gcp-25-core-viewer"
 sa_list                 = [
                         "test1234"  ,

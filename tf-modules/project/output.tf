@@ -22,8 +22,7 @@ output "email_core_viewer" {
 
 
 output "sa_vm" {
-  description = "Service account resource (for VM)."
-
+    description = "Service account resource (for VM)."
     value = values(google_service_account.custom_sa)[*].name
 
 }
