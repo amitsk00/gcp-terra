@@ -7,7 +7,8 @@ my_venv
 # Terraform files
 ./.terraform/*
 .terraform.lock.hcl
-
+my_terra_plan
+test.tf 
 
 # below files will be ignores
 *.xls

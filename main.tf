@@ -75,7 +75,7 @@ module "project-network" {
     # vpc_name_1 
     subnet_map = var.subnet_map
 
-    depends_on = [ module.project-api ]
+    depends_on = [ module.project-api  , module.project-init]
 }
 
 
@@ -94,6 +94,13 @@ module "project-vm" {
 
     sa_mail = module.project-init.email_core_viewer
     sa_list = var.sa_list 
+
+    autoscaling = var.autoscaling
+    max_replicas = var.max_replicas
+    min_replicas = var.min_replicas
+    cooldown_period = var.cooldown_period
+    autoscaling_cpu = var.autoscaling_cpu
+    mac_type_f1m = var.mac_type_f1m 
 
 
     depends_on = [ module.project-network ]

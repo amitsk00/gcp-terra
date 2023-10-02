@@ -47,3 +47,10 @@ output vm_ip1 {
 
 
 
+
+
+# TEST
+
+output "zone_list" {
+  value = module.project-vm.zone_list
+}

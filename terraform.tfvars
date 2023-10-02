@@ -38,7 +38,15 @@ subnet_map = {
 
 # VM
 mac_type_e2m            = "e2-medium"
+mac_type_f1m            = "f1-micro"
 vm_name                 = "test123"
-vm_image                =  "debian-cloud/debian-11"
+vm_image                = "debian-cloud/debian-11"
+
+
+autoscaling = false
+max_replicas = 3
+min_replicas = 2
+cooldown_period = 45
+autoscaling_cpu = 0.6
 
 
