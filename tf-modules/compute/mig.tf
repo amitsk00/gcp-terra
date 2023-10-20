@@ -2,6 +2,12 @@
 
 locals {
     sa_for_vm  = one([ for item in var.sa_list : item if can(regex("vm", item)) ])
+
+    sa_email_vm  = one([ for item in var.sa_email_list : item if can(regex("vm", item)) ])
+}
+
+output "xx" {
+  value = local.sa_email_vm
 }
 
 
@@ -24,15 +30,15 @@ resource "google_compute_instance_template" "lb-mig-tmpl" {
     description = "This template is used to create MIG as backend for LB."
     # count = 2 
 
-    tags = ["foo", "bar"]
+    tags = ["foo", "bar" , "fw-vpc1-a-i-hc" , "http-server" , "https-server"]
 
     labels = {
-      environment = "dev"
-      foo = "bar" 
+        environment = "dev"
+        foo = "bar" 
     }
 
     metadata = {
-      foo = "bar"
+        foo = "bar"
     }
 
     instance_description = "LB related "
@@ -65,7 +71,7 @@ resource "google_compute_instance_template" "lb-mig-tmpl" {
     service_account {
         # Google recommends custom service accounts that have cloud-platform scope and permissions granted via IAM Roles.
         # email  = var.sa_mail
-        email = local.sa_for_vm
+        email = "${local.sa_for_vm}@${var.project_id}.iam.gserviceaccount.com"
         scopes = ["cloud-platform"]
     }
 
@@ -74,6 +80,8 @@ resource "google_compute_instance_template" "lb-mig-tmpl" {
         automatic_restart = "${var.automatic_restart}"
         on_host_maintenance = "MIGRATE"
     }      
+
+    # depends_on = [  ]
 }
 
 
@@ -86,21 +94,21 @@ resource "google_compute_instance_template" "lb-mig-tmpl" {
 
 resource "google_compute_health_check" "autohealing_mig" {
     name                = "autohealing-health-check-mig"
-    check_interval_sec  = 5
+    check_interval_sec  = 10
     timeout_sec         = 5
     healthy_threshold   = 2
-    unhealthy_threshold = 10 # 50 seconds
+    unhealthy_threshold = 3 # 50 seconds
 
     http_health_check {
         request_path = "/"
-        port         = "8080"
+        port         = "80"
     }
 }
 
 
-resource "google_compute_instance_group_manager" "appserver_zonal" {
+resource "google_compute_instance_group_manager" "mig_zonal" {
     provider = google-beta
-    name = "mig-appserver"
+    name = "mig-zonal"
 
     base_instance_name = "app-zonal"
     zone               = var.zone
@@ -149,9 +157,9 @@ resource "google_compute_instance_group_manager" "appserver_zonal" {
 
 
 
-resource "google_compute_region_instance_group_manager" "appserver_regional" {
+resource "google_compute_region_instance_group_manager" "mig_regional" {
     provider = google-beta
-    name = "appserver-igm"
+    name = "mig-regional"
 
     base_instance_name         = "app-regional"
     region                     = var.region
@@ -172,7 +180,7 @@ resource "google_compute_region_instance_group_manager" "appserver_regional" {
       }
 
     # target_pools = [google_compute_target_pool.appserver.id]
-    target_size  = 2
+    target_size  = 3
 
     named_port {
         name = "custom"
@@ -188,8 +196,9 @@ resource "google_compute_region_instance_group_manager" "appserver_regional" {
         instance_redistribution_type   = "PROACTIVE"
         minimal_action                 = "REPLACE"
         most_disruptive_allowed_action = "REPLACE"
-        max_surge_percent              = 0
-        # max_unavailable_fixed          = 0
+        max_surge_fixed                = 0
+        # max_surge_percent              = 25  # for size > 10 
+        max_unavailable_fixed          = 4
         min_ready_sec                  = 50
         replacement_method             = "RECREATE"
     }
@@ -215,8 +224,8 @@ locals {
     }
 
 
-    zonal_mig = google_compute_instance_group_manager.appserver_zonal.name
-    regional_mig = google_compute_region_instance_group_manager.appserver_regional.name
+    zonal_mig = google_compute_instance_group_manager.mig_zonal.name
+    regional_mig = google_compute_region_instance_group_manager.mig_regional.name
 
 }
 

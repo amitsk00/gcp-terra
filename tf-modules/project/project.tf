@@ -9,6 +9,29 @@ data "google_project" "my_project" {
 
 
 
+## GCP APIs
+
+
+resource "google_project_service" "gcp_services_enable_default" {
+    project =   data.google_project.my_project.project_id
+    for_each = toset(var.default_service_list)
+    service = each.key
+    disable_on_destroy = false
+}
+
+resource "google_project_service" "gcp_services_enable" {
+    # project = var.project_id
+    for_each = toset(var.service_list)
+    service = each.key
+    disable_on_destroy = false
+
+    depends_on = [ google_project_service.gcp_services_enable_default ]
+}
+
+
+
+
+
 
 
 ## Service Account setup as VIEWER only
@@ -35,22 +58,26 @@ resource "google_service_account" "custom_sa" {
     description = each.key 
 }
 
-resource "google_service_account_iam_binding" "cicd_binding1" {
+resource "google_service_account_iam_member" "cicd_binding1" {
     # service_account_id = google_service_account.sa.name
     # for_each = toset(google_service_account.custom_sa.name)
     # service_account_id = each.value
     for_each = google_service_account.custom_sa
     service_account_id = each.value.id 
     role               = "roles/iam.serviceAccountUser"
-    members = ["serviceAccount:${var.cicd_terra}"]
+    member = "serviceAccount:${var.cicd_terra}"
+
+    depends_on = [ google_project_service.gcp_services_enable ]
 }
 
-resource "google_service_account_iam_binding" "cicd_binding2" {
+resource "google_service_account_iam_member" "cicd_binding2" {
     # service_account_id = google_service_account.sa.name
     # for_each = toset(google_service_account.custom_sa.name)
     # service_account_id = each.value
     for_each = google_service_account.custom_sa
     service_account_id = each.value.id 
     role               = "roles/iam.serviceAccountTokenCreator"
-    members = ["serviceAccount:${var.cicd_terra}"]
+    member = "serviceAccount:${var.cicd_terra}"
+
+    depends_on = [ google_project_service.gcp_services_enable ]
 }

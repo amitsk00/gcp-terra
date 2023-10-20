@@ -57,3 +57,7 @@ output "mig_regional" {
 
 
 # TEST
+
+output "xx" {
+  value = module.project-vm.xx
+}

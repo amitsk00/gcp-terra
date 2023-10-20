@@ -32,6 +32,8 @@ data "google_project" "my_project" {
 }
 
 
+
+
 module "project-init" {
     source = "./tf-modules/project"
 
@@ -43,19 +45,13 @@ module "project-init" {
     sa_core_viewer = var.sa_core_viewer
     # sa_list = local.json_sa_data.my_sa_list 
 
+    default_service_list = var.default_service_list
+    service_list = var.service_list    
+
     cicd_terra = var.cicd_terra
 }
 
 
-module "project-api" {
-    source = "./tf-modules/api"
-
-    project_id = var.project_id
-
-    default_service_list = var.default_service_list
-    service_list = var.service_list
-
-}
 
 
 module "project-gcs" {
@@ -77,7 +73,7 @@ module "project-network" {
     # vpc_name_1 
     subnet_map = var.subnet_map
 
-    depends_on = [ module.project-api  , module.project-init]
+    depends_on = [ module.project-init]
 }
 
 
@@ -96,6 +92,7 @@ module "project-vm" {
 
     sa_mail = module.project-init.email_core_viewer
     sa_list = var.sa_list 
+    sa_email_list = module.project-init.sa_vm
 
     autoscaling = var.autoscaling
     max_replicas = var.max_replicas

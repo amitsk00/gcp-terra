@@ -118,3 +118,7 @@ variable "automatic_restart" {
   default     = "true"
 }
 
+variable "sa_email_list" {
+    description = "mail List of SA created"
+    default = " "
+}

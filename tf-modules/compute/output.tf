@@ -9,10 +9,10 @@ output "zone_list" {
 
 
 output "mig_zonal" {
-    value = google_compute_instance_group_manager.appserver_zonal
+    value = google_compute_instance_group_manager.mig_zonal.id 
 }
 
 output "mig_regional" {
-    value = google_compute_region_instance_group_manager.appserver_regional
+    value = google_compute_region_instance_group_manager.mig_regional.id 
 }
 
