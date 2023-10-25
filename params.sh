@@ -1,3 +1,5 @@
+# Generic 
+
 export PROJECT_ID="ask-proj-25"
 
 
@@ -5,13 +7,20 @@ export REGION="us-central1"
 export ZONE="us-central1-c"
 
 export CORE_VIEWER="gcp-25-core-viewer"
+export CICD_TERRA_SA="cicd-terra"
 
+
+# GCS
 
 export FIRST_BUCKET="xyz"
 export GCS_LOC_US=US
 
 
+# VPC
+
 export CIDR1="10.1.1.0/24"
+
+
 
 # GCE VM
 
@@ -25,5 +34,4 @@ export MAX_REPLICA=3
 export MIN_REPLICA=2
 export COOLDOWN=45
 export AUTOSCALE_CPU=0.6
-
 export AUTOSCALE=false

@@ -115,9 +115,40 @@ resource "google_compute_firewall" "vpc1-hc_allow" {
       ports    = [ 22 , 25 , 80 , 443 , 8080 , 3389 ]
     }
 
-    source_ranges = [ "130.211.0.0/22" , "35.191.0.0/16"  , "209.85.152.0/22" , "209.85.204.0/22" ]
+    source_ranges = [ 
+        "130.211.0.0/22" , 
+        "35.191.0.0/16"  , 
+        "209.85.152.0/22" , 
+        "209.85.204.0/22" 
+    ]
     target_tags = ["fw-vpc1-a-i-hc"]
 
     depends_on = [ google_compute_network.vpc1 ]
   
 }
+
+
+resource "google_compute_firewall" "vpc1-all_allow" {
+    name    = "fw-vpc1-a-i-all"
+    project = var.project_id
+    network = google_compute_network.vpc1.name
+    description = "Allow everything - generic"
+    direction = "INGRESS"
+
+    allow {
+      protocol = "tcp"
+      ports    = [ 22 , 25 , 80 , 443 , 8080 , 3389 ]
+    }
+
+    source_ranges = [ 
+      "0.0.0.0/0" ,  
+      "35.235.240.0/20" , 
+      "130.211.0.0/22" , 
+      "35.191.0.0/16" 
+    ]
+    target_tags = ["fw-vpc1-a-i-all"]
+
+    depends_on = [ google_compute_network.vpc1 ]
+  
+}
+

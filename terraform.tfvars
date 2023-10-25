@@ -1,11 +1,11 @@
 project_id                 = "ask-proj-25"
 # credentials_file         = "<FILE>"
-
+main_user               = "amit"
 
 region                  = "us-central1"
 zone                    = "us-central1-c"
 
-cicd_terra              = "cicd-terra@ask-proj-25.iam.gserviceaccount.com"
+cicd_terra              = "cicd-terra"
 sa_core_viewer          = "gcp-25-core-viewer"
 sa_list                 = [
                         "test1234"  ,
@@ -36,6 +36,8 @@ subnet_map = {
         }
 }
 
+
+
 # VM
 mac_type_e2m            = "e2-medium"
 mac_type_f1m            = "f1-micro"
@@ -43,6 +45,7 @@ vm_name                 = "test123"
 vm_image                = "debian-cloud/debian-11"
 
 
+# MIG
 autoscaling = false
 max_replicas = 3
 min_replicas = 2

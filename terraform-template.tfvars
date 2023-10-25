@@ -1,6 +1,6 @@
 project_id                 = "${PROJECT_ID}"
 # credentials_file         = "<FILE>"
-
+main_user               = "${USER}"
 
 region                  = "${REGION}"
 zone                    = "${ZONE}"
@@ -36,6 +36,8 @@ subnet_map = {
         }
 }
 
+
+
 # VM
 mac_type_e2m            = "${MACHINE_TYPE_e2m}"
 mac_type_f1m            = "${MACHINE_TYPE_f1m}"
@@ -43,6 +45,7 @@ vm_name                 = "${VM_NAME}"
 vm_image                = "${VM_IMAGE}"
 
 
+# MIG
 autoscaling = ${AUTOSCALE}
 max_replicas = ${MAX_REPLICA}
 min_replicas = ${MIN_REPLICA}

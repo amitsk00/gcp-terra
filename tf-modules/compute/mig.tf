@@ -30,7 +30,11 @@ resource "google_compute_instance_template" "lb-mig-tmpl" {
     description = "This template is used to create MIG as backend for LB."
     # count = 2 
 
-    tags = ["foo", "bar" , "fw-vpc1-a-i-hc" , "http-server" , "https-server"]
+    tags = [ "foo", "bar" , 
+        "fw-vpc1-a-i-hc" , "http-server" , "https-server" , 
+        "fw-vpc1-ssh" , "fw-vpc1-ubuntu" , "fw-vpc1-a-i-all" ,
+         "fw-vpc1-a-i-all"
+    ]
 
     labels = {
         environment = "dev"

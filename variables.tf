@@ -77,6 +77,9 @@ variable "default_service_list" {
 }
 
 
+variable "main_user" {
+     type = string
+}
 
 # SA related
 

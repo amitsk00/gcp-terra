@@ -50,6 +50,11 @@ variable "asset_list_spanner" {
 }
 
 
+variable "main_user" {
+     type = string
+}
+
+
 variable "service_list" {
     type = list(string)
 

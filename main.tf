@@ -40,6 +40,7 @@ module "project-init" {
     project_id = var.project_id
     region = var.region
     zone = var.zone
+    main_user = var.main_user 
 
     sa_list = var.sa_list 
     sa_core_viewer = var.sa_core_viewer
@@ -86,6 +87,7 @@ module "project-vm" {
     zone = var.zone
     mac_type_e2m = var.mac_type_e2m
     vm_image = var.vm_image 
+    
 
     # vpc_name = module.project-network.network1-selflink
     subnet_name = module.project-network.subnet-default
@@ -93,6 +95,7 @@ module "project-vm" {
     sa_mail = module.project-init.email_core_viewer
     sa_list = var.sa_list 
     sa_email_list = module.project-init.sa_vm
+    
 
     autoscaling = var.autoscaling
     max_replicas = var.max_replicas

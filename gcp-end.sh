@@ -9,10 +9,8 @@ BLUE="\e[1;34m"
 NC="\e[1;0m"
 
 
-PROJECT="ask-proj-25"
-ACCOUNT="cicd-terra"
-SA_EMAIL="${ACCOUNT}@${PROJECT}.iam.gserviceaccount.com"
-export CICD_TERRA_SA=${SA_EMAIL}
+export USER=$(gcloud config list --format="value(core.account)")
+
 
 if [[ -f ./params.sh ]]; then
     echo -e "params file is present"
@@ -25,9 +23,20 @@ fi
 
 
 
-echo -e "wiping off GCP setup" 
+PROJECT=${PROJECT_ID}
+ACCOUNT=${CICD_TERRA_SA}
+CICD_EMAIL="${ACCOUNT}@${PROJECT}.iam.gserviceaccount.com"
+export CICD_TERRA_SA=${CICD_EMAIL}
+
+
+
+
+echo -e "${BLUE}Wiping off GCP setup ${NC}" 
 echo "-----------------------------------------"
 
+
+# Set SA for Terraform
+export GOOGLE_IMPERSONATE_SERVICE_ACCOUNT=${CICD_EMAIL}
 
 
 echo -e "setting up terraform "

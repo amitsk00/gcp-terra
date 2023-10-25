@@ -1,10 +1,14 @@
 ## Google Cloud project
 
+
+
 data "google_project" "my_project" {
     project_id = var.project_id
 }
 
-
+locals {
+  cicd_mail = "${var.cicd_terra}@${var.project_id}.iam.gserviceaccount.com"
+}
 
 
 
@@ -65,7 +69,7 @@ resource "google_service_account_iam_member" "cicd_binding1" {
     for_each = google_service_account.custom_sa
     service_account_id = each.value.id 
     role               = "roles/iam.serviceAccountUser"
-    member = "serviceAccount:${var.cicd_terra}"
+    member = "serviceAccount:${local.cicd_mail}"
 
     depends_on = [ google_project_service.gcp_services_enable ]
 }
@@ -77,7 +81,32 @@ resource "google_service_account_iam_member" "cicd_binding2" {
     for_each = google_service_account.custom_sa
     service_account_id = each.value.id 
     role               = "roles/iam.serviceAccountTokenCreator"
-    member = "serviceAccount:${var.cicd_terra}"
+    member = "serviceAccount:${local.cicd_mail}"
+
+    depends_on = [ google_project_service.gcp_services_enable ]
+}
+
+
+resource "google_service_account_iam_member" "cicd_binding3" {
+    # service_account_id = google_service_account.sa.name
+    # for_each = toset(google_service_account.custom_sa.name)
+    # service_account_id = each.value
+    for_each = google_service_account.custom_sa
+    service_account_id = each.value.id 
+    role               = "roles/iam.serviceAccountUser"
+    member = "user:${var.main_user}"
+
+    depends_on = [ google_project_service.gcp_services_enable ]
+}
+
+resource "google_service_account_iam_member" "cicd_binding4" {
+    # service_account_id = google_service_account.sa.name
+    # for_each = toset(google_service_account.custom_sa.name)
+    # service_account_id = each.value
+    for_each = google_service_account.custom_sa
+    service_account_id = each.value.id 
+    role               = "roles/iam.serviceAccountTokenCreator"
+    member = "user:${var.main_user}"
 
     depends_on = [ google_project_service.gcp_services_enable ]
 }

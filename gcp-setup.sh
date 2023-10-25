@@ -12,32 +12,31 @@ LINE_SEP="\n\n"
 PREFIX=" >>> "
 
 
-
-
+export USER=$(gcloud config list --format="value(core.account)")
 
 
 echo -e "${BLUE}Starting GCP setup ${NC}" 
 echo "-----------------------------------------"
-
-
-USER=$(gcloud config list --format="value(core.account)")
-
-PROJECT="ask-proj-25"
-ACCOUNT="cicd-terra"
-DESCR="CICD account using Terraform for IaC"
-SA_EMAIL="${ACCOUNT}@${PROJECT}.iam.gserviceaccount.com"
-export CICD_TERRA_SA=${SA_EMAIL}
-DISPLAY_NAME="CICD for Terraform"
-
 
 if [[ -f ./params.sh ]]; then
     echo -e "params file is present"
     source ./params.sh
     envsubst < terraform-template.tfvars > terraform.tfvars
 else 
-    echo -e "params file is missig - create the file and run again"
+    echo -e "${RED}params file is missig - create the file and run again ${NC}"
     exit 25
 fi 
+
+
+
+
+PROJECT=${PROJECT_ID}
+ACCOUNT=${CICD_TERRA_SA}
+DESCR="CICD account using Terraform for IaC"
+CICD_EMAIL="${ACCOUNT}@${PROJECT}.iam.gserviceaccount.com"
+export CICD_TERRA_SA=${CICD_EMAIL}
+DISPLAY_NAME="CICD for Terraform"
+
 
 
 
@@ -47,11 +46,13 @@ ROLES=(
 )
 
 temp1=$(gcloud iam service-accounts list --filter="email:cicd"  --format="value(email)")
-if [[ "${temp1}" == "${SA_EMAIL}" ]]
+
+
+if [[ "${temp1}" == "${CICD_EMAIL}" ]]
 then
-    echo -e "${PREFIX}${YELLOW}SA ${SA_EMAIL} already created ${NC} "
+    echo -e "${PREFIX}${YELLOW}SA ${CICD_EMAIL} already created ${NC} "
 else
-    echo -e "${PREFIX}${BLUE}SA ${SA_EMAIL} to be created ${NC} "
+    echo -e "${PREFIX}${BLUE}SA ${CICD_EMAIL} to be created ${NC} "
 
     gcloud iam service-accounts create ${ACCOUNT} \
         --project=${PROJECT} \
@@ -62,7 +63,7 @@ fi
 
 gcloud projects add-iam-policy-binding ${PROJECT} \
     --project=${PROJECT} \
-    --member=serviceAccount:${SA_EMAIL} \
+    --member=serviceAccount:${CICD_EMAIL} \
     --role=roles/owner >/dev/null 
 
 
@@ -76,7 +77,7 @@ else
     echo -e "${PREFIX}${YELLOW}SA key being created ... ${NC}"
     gcloud iam service-accounts keys create ${MYDIR}/key.json \
         --project=${PROJECT} \
-        --iam-account=${SA_EMAIL} 
+        --iam-account=${CICD_EMAIL} 
 fi 
 
 
@@ -99,8 +100,8 @@ fi
 
 # for ROLE in ${ROLES[@]}
 # do
-#     echo -e "Assigning ${ROLE} to ${USER} on ${SA_EMAIL} " 
-#     gcloud iam service-accounts add-iam-policy-binding ${SA_EMAIL} \
+#     echo -e "Assigning ${ROLE} to ${USER} on ${CICD_EMAIL} " 
+#     gcloud iam service-accounts add-iam-policy-binding ${CICD_EMAIL} \
 #         --member=user:${USER} \
 #         --role=roles/${ROLE} \
 #         --project=${PROJECT} >/dev/null
@@ -112,12 +113,18 @@ fi
 
 
 # Set SA for Terraform
-export GOOGLE_IMPERSONATE_SERVICE_ACCOUNT=${SA_EMAIL}
+export GOOGLE_IMPERSONATE_SERVICE_ACCOUNT=${CICD_EMAIL}
 
 
 
 echo -e "${LINE_SEP}Setting up terraform "
 terraform init
+
+echo -e "${LINE_SEP}${BLUE}List of existing infra as below: ${YELLOW}"
+echo -e "==================================================="
+terraform state list 
+echo -e "===================================================${NC}${LINE_SEP}"
+
 
 SUCCESS="0"
 
