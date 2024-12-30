@@ -5,10 +5,13 @@ my_venv/
 my_venv
 
 # Terraform files
-./.terraform/*
-.terraform.lock.hcl
-my_terra_plan
-test.tf 
+./tf-code/.terraform/*
+./tf-code/.terraform.lock.hcl
+./tf-code/my_terra_plan
+./tf-code/test.tf*
+./tf-code/crash.log 
+./tf-code/.tfstate.*
+./tf-code/.tfstate
 
 # below files will be ignores
 *.xls
