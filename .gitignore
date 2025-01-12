@@ -13,6 +13,14 @@ my_venv
 ./tf-code/.tfstate.*
 ./tf-code/.tfstate
 
+tf-code/.terraform/
+tf-code/.terraform.lock.hcl
+tf-code/my_terra_plan
+tf-code/test.tf*
+tf-code/crash.log 
+tf-code/.tfstate.*
+tf-code/.tfstate
+
 # below files will be ignores
 *.xls
 *.xls*
