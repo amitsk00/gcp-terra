@@ -5,6 +5,17 @@ variable module_enabled {
   default     = true
 }
 
+variable "count_zonal_mig" {
+  type = number
+  default = 1
+}
+
+variable "count_regional_mig" {
+  type = number
+  default = 1
+}
+
+
 variable "project_id" { }
 
 variable "region" {
@@ -41,15 +52,17 @@ variable "startup_url" {
   type        = string
 }
 
-# variable "vpc_name" {
-#     type = string
-# }
+variable "vpc_name" {
+    type = string
+    description = "Name of 1st VPC"
+}
+
 
 variable "subnet_name" {
     type = string
 }
 
-variable "sa_mail" {
+variable "sa_core_viewer_email" {
     type = string
     description = "SA for VM"
 }
@@ -58,11 +71,50 @@ variable "sa_list" {
     type = list(string)
 }
 
+variable "sa_run_email" {
+  type        = string
+  description = "SA for Cloud Run"
+  
+}
+
+variable "sa_vm_email" {
+  type        = string
+  description = "SA for GCE"
+  
+}
+
+# variable "metadata_vm" {
+#     type = list(object({
+#         key   = string
+#         value = string
+#     }))
+#     default = [
+#       { key = "foo", value = "bar" },
+#       { key = "created-by", value = "terra" }      
+#     ]
+# }
+
+variable "metadata_vm" {
+  description = "Metadata key-value pairs for the VM"
+  type = map(object({
+    key   = string
+    value = string
+  }))
+  default = {
+    example_key1 = {
+      key   = "foo"
+      value = "bar"
+    }
+    example_key2 = {
+      key   = "created-by"
+      value = "terra"
+    }
+  }
+}
+
 
 
 ## Autoscalar
-
-
 
 variable autoscaling {
   description = "Enable autoscaling."
@@ -126,4 +178,27 @@ variable "automatic_restart" {
 variable "sa_email_list" {
     description = "mail List of SA created"
     default = " "
+}
+
+
+variable "ar_repo_name" { 
+  description = "Artifact Repo name - 1st sample repo"
+  type = string
+}
+
+## GKE
+
+variable "create_gke" {
+  description = "Create GKE service"
+  default     = false
+  
+}
+
+
+## Run
+
+variable "create_run" {
+  description = "Create Cloud Run service"
+  default     = false
+  
 }

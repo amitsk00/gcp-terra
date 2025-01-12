@@ -9,12 +9,19 @@ terra_backend_gcs       = "gs://ask-proj-35-terraform/"
 terra_backend_prefix    = "state"
 
 cicd_terra              = "cicd-terra"
-sa_core_viewer          = "gcp-25-core-viewer"
+sa_core_viewer          = "gcp-core-viewer"
 sa_list                 = [
                         "test1234"  ,
                         "test-run" ,
                         "test-vm" 
                         ]
+
+
+# Count and enabling if more than 0
+count_zonal_mig  = 0
+count_regional_mig = 0
+create_run = true
+create_gke = false
 
 
 
@@ -23,7 +30,11 @@ first_suffix            = "xyz"
 gcs_loc_us              = "US"
 
 
+# AR
+py_image_1          = "py-v1"
+
 # VPC
+vpc_name                = "my-new-network1"
 cidr1                   = "10.1.0.0/16"
 
 subnet_map = {
@@ -47,6 +58,7 @@ mac_type_f1m            = "f1-micro"
 vm_name                 = "test123"
 vm_image                = "debian-cloud/debian-11"
 startup_url             = "gs://ask-proj-35-main/rhel_startup.sh"
+metadata_vm             = [ ]
 
 
 # MIG

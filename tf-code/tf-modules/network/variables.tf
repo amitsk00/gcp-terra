@@ -14,10 +14,10 @@ variable "zone" {
 }
 
 
-# variable "vpc_name_1" {
-#     type = string
-#     description = "Name of 1st VPC"
-# }
+variable "vpc_name" {
+    type = string
+    description = "Name of 1st VPC"
+}
 
 variable "cidr1" {
     type    = string

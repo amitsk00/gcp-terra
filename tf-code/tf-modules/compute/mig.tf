@@ -16,7 +16,7 @@ data "google_compute_image" "my_image" {
 resource "google_compute_disk" "foobar" {
     name  = "existing-disk"
     image = data.google_compute_image.my_image.self_link
-    size  = 100
+    size  = 20
     type  = "pd-ssd"
     zone  =  var.zone
 }
@@ -71,8 +71,8 @@ resource "google_compute_instance_template" "lb-mig-tmpl" {
 
     service_account {
         # Google recommends custom service accounts that have cloud-platform scope and permissions granted via IAM Roles.
-        # email  = var.sa_mail
-        email = "${local.sa_for_vm}@${var.project_id}.iam.gserviceaccount.com"
+        # email  = var.sa_core_viewer_email
+        email = var.sa_vm_email
         scopes = ["cloud-platform"]
     }
 
@@ -87,30 +87,32 @@ resource "google_compute_instance_template" "lb-mig-tmpl" {
 
 
 
-
-
-
-
-
-
 resource "google_compute_health_check" "autohealing_mig" {
+    provider            = google-beta
     name                = "autohealing-health-check-mig"
+
     check_interval_sec  = 10
     timeout_sec         = 5
     healthy_threshold   = 2
     unhealthy_threshold = 3 # 50 seconds
 
     # http_health_check {
-    #     request_path = "/"
+    #     request_parasith = "/"
     #     port         = "80"
     # }
     tcp_health_check {
-        port = "8080"
+        port = "22"
     }    
+    log_config {
+        enable = true
+    }
 }
 
 
+
 resource "google_compute_instance_group_manager" "mig_zonal" {
+    count = var.count_zonal_mig 
+
     provider = google-beta
     name = "mig-zonal"
 
@@ -153,15 +155,22 @@ resource "google_compute_instance_group_manager" "mig_zonal" {
       replacement_method             = "RECREATE"
     }
 
-    instance_lifecycle_policy {
-        force_update_on_repair = "YES"
-    }
+    # instance_lifecycle_policy {
+    #     force_update_on_repair    = "YES"
+    #     default_action_on_failure = "DO_NOTHING"
+    # }
+
+    lifecycle {
+        create_before_destroy = true
+    }      
 }
 
 
 
 
 resource "google_compute_region_instance_group_manager" "mig_regional" {
+    count = var.count_regional_mig
+    
     provider = google-beta
     name = "mig-regional"
 
@@ -207,9 +216,13 @@ resource "google_compute_region_instance_group_manager" "mig_regional" {
         replacement_method             = "RECREATE"
     }
 
-    instance_lifecycle_policy {
-        force_update_on_repair = "YES"
-    }
+    # instance_lifecycle_policy {
+    #     force_update_on_repair = "YES"
+    # }
+
+    lifecycle {
+        create_before_destroy = true
+    }    
 }
 
 
@@ -228,8 +241,8 @@ locals {
     }
 
 
-    zonal_mig = google_compute_instance_group_manager.mig_zonal.name
-    regional_mig = google_compute_region_instance_group_manager.mig_regional.name
+    zonal_mig = google_compute_instance_group_manager.mig_zonal[*].name
+    regional_mig = google_compute_region_instance_group_manager.mig_regional[*].name
 
 }
 
@@ -261,6 +274,7 @@ resource "google_compute_autoscaler" "scalar_zonal" {
 
 
 resource "google_compute_region_autoscaler" "scalar_regional" {
+
     provider = google-beta
     count   = "${var.module_enabled && var.autoscaling  ? 1 : 0}"
     name    = "${local.regional_mig}"

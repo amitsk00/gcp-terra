@@ -9,6 +9,11 @@ export USER="amitsk.gcp.35@gmail.com"
 # Generic
 export isDayZero=false
 
+export COUNT_ZONAL_MIG=0
+export COUNT_REGIONAL_MIG=0
+export CREATE_RUN=true
+export CREATE_GKE=false
+
 # GCP Generic 
 export REGION="us-central1"
 export ZONE="us-central1-c"
@@ -29,7 +34,11 @@ export FIRST_BUCKET="xyz"
 export GCS_LOC_US=US
 
 
+# AR
+export PY_IMAGE_1="py-v1"
+
 # VPC
+export VPC_NAME="my-new-network1"
 export CIDR1="10.1.0.0/16"
 
 
@@ -41,6 +50,7 @@ export VM_NAME="test123"
 export VM_IMAGE="debian-cloud/debian-11"
 export STARTUP_FILE="rhel_startup.sh"
 export GCS_STARTUP_URL="${GCS_MAIN}/${STARTUP_FILE}"
+export METADATA_VM=()
 
 
 export MAX_REPLICA=3

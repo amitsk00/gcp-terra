@@ -178,7 +178,7 @@ export GOOGLE_IMPERSONATE_SERVICE_ACCOUNT=${CICD_EMAIL}
 
 
 
-echo -e "${LINE_SEP}${LINE_SEP}Setting up terraform "
+echo -e "${LINE_SEP}${BLUE}Setting up terraform ${NC}"
 
 # # below lines to set backend as GCS using variables
 # export TF_VAR_terra_backend_gcs="${GCS_TERRA}/"
@@ -187,7 +187,7 @@ echo -e "${LINE_SEP}${LINE_SEP}Setting up terraform "
 #   -backend-config="bucket=${TF_VAR_terra_backend_gcs}" \
 #   -backend-config="prefix=${TF_VAR_terra_backend_prefix}"
 
-terraform init
+terraform init -upgrade 
 
 
 
@@ -200,8 +200,9 @@ echo -e "===================================================${NC}${LINE_SEP}"
 
 SUCCESS="0"
 
-echo -e "${PREFIX}getting the plan ..."
+echo -e "${PREFIX} ${BLUE}getting the plan ... ${NC}"
 terraform plan  --var-file=terraform.tfvars  --out=my_terra_plan 
+# terraform plan  --var-file=terraform.tfvars  --out=my_terra_plan  | grep -E 'Plan:|will be|must be'
 retCdPlan="$?"
 
 if [[ "${retCdPlan}" -gt "0" ]]
@@ -213,7 +214,7 @@ else
     
     if [[ "$myReply" == "yes" ]]
     then 
-        echo -e "setting up infra"
+        echo -e "${LINE_SEP}${BLUE}setting up infra${NC}"
 
         terraform apply  my_terra_plan 
         if [[ "${?}" -gt "0" ]]
@@ -236,5 +237,18 @@ then
     sleep 15
 fi
 
+py_repo=$(terraform output -raw ar_repo_url)
+py_repo_url="${REGION}-docker.pkg.dev/${PROJECT_ID}/${py_repo}"
+
+gcloud auth configure-docker
+
+set -x
+gcloud auth print-access-token | docker login -u oauth2accesstoken --password-stdin "https://${REGION}-docker.pkg.dev"
+sudo docker push ${py_repo_url}/${PY_IMAGE_1}:latest
+set +x
 
 
+
+##########
+# to unlock terra lock file
+# terraform force-unlock 1735645114520001
