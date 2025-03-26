@@ -87,6 +87,8 @@ module "project-ar" {
   # ar_repo_description = var.ar_repo_description
 
   py_image_1 = var.py_image_1
+  main_user  = var.main_user
+  
 }
 
 

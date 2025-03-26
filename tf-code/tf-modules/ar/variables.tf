@@ -21,3 +21,7 @@ variable "py_image_1" {
   default     = "python:3.8"
   
 }
+
+variable "main_user" {
+     type = string
+}

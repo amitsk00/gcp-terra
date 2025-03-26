@@ -18,9 +18,9 @@ sa_list                 = [
 
 
 # Count and enabling if more than 0
-count_zonal_mig  = 0
+count_zonal_mig  = 1
 count_regional_mig = 0
-create_run = true
+create_run = false
 create_gke = false
 
 
@@ -62,8 +62,8 @@ metadata_vm             = [ ]
 
 
 # MIG
-autoscaling = false
-max_replicas = 3
+autoscaling = true
+max_replicas = 4
 min_replicas = 2
 cooldown_period = 45
 autoscaling_cpu = 0.6

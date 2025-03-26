@@ -9,9 +9,9 @@ export USER="amitsk.gcp.35@gmail.com"
 # Generic
 export isDayZero=false
 
-export COUNT_ZONAL_MIG=0
+export COUNT_ZONAL_MIG=1
 export COUNT_REGIONAL_MIG=0
-export CREATE_RUN=true
+export CREATE_RUN=false
 export CREATE_GKE=false
 
 # GCP Generic 
@@ -53,8 +53,9 @@ export GCS_STARTUP_URL="${GCS_MAIN}/${STARTUP_FILE}"
 export METADATA_VM=()
 
 
-export MAX_REPLICA=3
+export AUTOSCALE=true   
+export MAX_REPLICA=4
 export MIN_REPLICA=2
 export COOLDOWN=45
 export AUTOSCALE_CPU=0.6
-export AUTOSCALE=false
+

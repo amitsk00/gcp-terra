@@ -39,7 +39,8 @@ resource "google_compute_instance_template" "lb-mig-tmpl" {
     }
 
     metadata = {
-        foo = "bar"
+        foo = "bar",
+        startup-script-url="gs://ask-proj-35-main/rhel_startup.sh"
     }
 
     instance_description = "LB related "
@@ -50,7 +51,8 @@ resource "google_compute_instance_template" "lb-mig-tmpl" {
     // Create a new boot disk from an image
     disk {
         # source_image      = "debian-cloud/debian-11"
-        source_image = data.google_compute_image.my_image.self_link
+        # source_image = data.google_compute_image.my_image.self_link
+        source_image = google_compute_instance.vm_template.boot_disk[0].initialize_params[0].image
         auto_delete       = true
         boot              = true
         // backup the disk every day
@@ -67,6 +69,7 @@ resource "google_compute_instance_template" "lb-mig-tmpl" {
 
     network_interface {
         subnetwork = var.subnet_name
+        access_config {}  # allows public access    
     }
 
     service_account {
@@ -81,8 +84,10 @@ resource "google_compute_instance_template" "lb-mig-tmpl" {
         automatic_restart = "${var.automatic_restart}"
         on_host_maintenance = "MIGRATE"
     }      
-
-    # depends_on = [  ]
+ 
+    # metadata_startup_script = file("gs://ask-proj-35-main/rhel_startup.sh") 
+    
+    depends_on = [ time_sleep.vm_startup_script  ]
 }
 
 
@@ -251,12 +256,12 @@ locals {
 
 resource "google_compute_autoscaler" "scalar_zonal" {
     provider = google-beta
-    count   = "${var.module_enabled && var.autoscaling ? 1 : 0}"
+    count   = "${var.mig_zonal_enabled && var.autoscaling ? 1 : 0}"
     #   name    = "${lcoal.zonal_mig}"
-    name    = "${local.zonal_mig}"   
+    name    = "${local.zonal_mig[0]}"   
     zone    = "${var.zone}"
     project = "${var.project_id}"
-    target  = "${local.zonal_mig}"   
+    target  = "${local.zonal_mig[0]}"   
         
 
     autoscaling_policy  {
@@ -276,7 +281,7 @@ resource "google_compute_autoscaler" "scalar_zonal" {
 resource "google_compute_region_autoscaler" "scalar_regional" {
 
     provider = google-beta
-    count   = "${var.module_enabled && var.autoscaling  ? 1 : 0}"
+    count   = "${var.mig_regional_enabled && var.autoscaling  ? 1 : 0}"
     name    = "${local.regional_mig}"
     region  = "${var.region}"
     project = "${var.project_id}"

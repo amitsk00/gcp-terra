@@ -1,9 +1,13 @@
 
-variable "module_enabled" {
+variable "mig_zonal_enabled" {
   description = ""
   default     = true
 }
 
+variable "mig_regional_enabled" {
+  description = ""
+  default     = false
+}
 
 variable "project_id" {}
 

@@ -91,6 +91,13 @@ output "run-py-service1" {
 # }
 
 
+## LB 
+
+output "lb_ip" {
+  value = module.project-vm.lb_ip
+}
+
+
 
 # TEST
 

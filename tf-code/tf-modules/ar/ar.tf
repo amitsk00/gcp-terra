@@ -9,6 +9,18 @@ resource "google_artifact_registry_repository" "my_py_repo" {
 }
 
 
+resource "google_artifact_registry_repository_iam_member" "my_py_repo_writer" {
+  provider    = google-beta
+  project     = var.project_id
+  location    = var.region
+
+  repository  = google_artifact_registry_repository.my_py_repo.repository_id
+  role        = "roles/artifactregistry.writer"
+  member      = "user:${var.main_user}"
+}
+
+
+
 # # push the existing image to AR
 
 # resource "null_resource" "build_and_push_image" {

@@ -36,3 +36,11 @@ output "run-py-service1" {
 #     value = google_container_cluster.first_cluster[each.key].name
   
 # }
+
+
+
+## LB
+
+output "lb_ip" {
+    value = google_compute_global_address.default.address
+}

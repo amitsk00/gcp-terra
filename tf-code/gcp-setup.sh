@@ -143,6 +143,8 @@ function create-first-bucket() {
         gcloud storage buckets create ${GCS_MAIN}
     fi 
     gcloud storage cp "../${STARTUP_FILE}" "${GCS_MAIN}/${STARTUP_FILE}"
+    gcloud storage cp ../py-files/load_generator.py "${GCS_MAIN}/load_generator.py"
+    gcloud storage cp ../py-files/py_load.service "${GCS_MAIN}/py_load.service"
 
 
     # create bucket for terraform files
@@ -235,17 +237,26 @@ if [[ "${SUCCESS}" -eq "1"  ]]
 then
     echo -e "${LINE_SEP}${GREEN} **** Waiting for 15 seconds so that all resources would be ready *** ${NC}"
     sleep 15
+
+    ################
+    # below code to setup AR
+    py_repo=$(terraform output -raw ar_repo_url)
+    py_repo_url="${REGION}-docker.pkg.dev/${PROJECT_ID}/${py_repo}"
+
+    gcloud auth configure-docker
+
+    set -x
+    gcloud auth print-access-token | docker login -u oauth2accesstoken --password-stdin "https://${REGION}-docker.pkg.dev"
+    sudo docker push ${py_repo_url}/${PY_IMAGE_1}:latest
+    set +x
+
+
+    # # Get the Load Balancer IP address
+    # LB_IP=$(terraform output -raw lb_ip)
+    # # Send load to the Load Balancer
+    # ab -n 100000 -c 100 http://$LB_IP/
+
 fi
-
-py_repo=$(terraform output -raw ar_repo_url)
-py_repo_url="${REGION}-docker.pkg.dev/${PROJECT_ID}/${py_repo}"
-
-gcloud auth configure-docker
-
-set -x
-gcloud auth print-access-token | docker login -u oauth2accesstoken --password-stdin "https://${REGION}-docker.pkg.dev"
-sudo docker push ${py_repo_url}/${PY_IMAGE_1}:latest
-set +x
 
 
 
