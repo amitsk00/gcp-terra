@@ -1,5 +1,5 @@
 output "nic0_ip1" {
-  value = google_compute_instance.test1.network_interface.0.network_ip
+  value = google_compute_instance.vm_template.network_interface.0.network_ip
 }
 
 
