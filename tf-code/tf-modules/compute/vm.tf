@@ -1,4 +1,4 @@
-resource "google_compute_instance" "test1" {
+resource "google_compute_instance" "vm_template" {
 	name         = var.vm_name 
 	machine_type = var.mac_type_e2m
 	zone         = var.zone 
@@ -46,4 +46,11 @@ resource "google_compute_instance" "test1" {
 		scopes = ["cloud-platform"]
 	}
 }
+
+
+resource "time_sleep" "vm_startup_script" {
+  depends_on = [google_compute_instance.vm_template]
+  create_duration = "30s"
+}
+
 
