@@ -1,0 +1,14 @@
+[Unit]
+Description=My Python Service to generate load
+After=network.target
+
+[Service]
+ExecStart=/usr/bin/python3 /opt/app/my_python_program.py
+WorkingDirectory=/opt/app
+StandardOutput=inherit
+StandardError=inherit
+Restart=always
+Environment=PYTHONUNBUFFERED=1
+
+[Install]
+WantedBy=multi-user.target

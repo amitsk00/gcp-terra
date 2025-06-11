@@ -1,0 +1,161 @@
+
+resource "google_compute_autoscaler" "default" {
+  count   = "${var.module_enabled && var.autoscaling   ? 1 : 0}"
+  name    = "${var.name}"
+  zone    = "${var.zone}"
+  project = "${var.project}"
+  target  = "${google_compute_instance_group_manager.default.self_link}"
+
+  autoscaling_policy = {
+    max_replicas               = "${var.max_replicas}"
+    min_replicas               = "${var.min_replicas}"
+    cooldown_period            = "${var.cooldown_period}"
+    cpu_utilization            = ["${var.autoscaling_cpu}"]
+    metric                     = ["${var.autoscaling_metric}"]
+    load_balancing_utilization = ["${var.autoscaling_lb}"]
+  }
+}
+
+resource "google_compute_region_autoscaler" "default" {
+  count   = "${var.module_enabled && var.autoscaling &&   ? 1 : 0}"
+  name    = "${var.name}"
+  region  = "${var.region}"
+  project = "${var.project}"
+  target  = "${google_compute_region_instance_group_manager.default.self_link}"
+
+  autoscaling_policy = {
+    max_replicas               = "${var.max_replicas}"
+    min_replicas               = "${var.min_replicas}"
+    cooldown_period            = "${var.cooldown_period}"
+    cpu_utilization            = ["${var.autoscaling_cpu}"]
+    metric                     = ["${var.autoscaling_metric}"]
+    load_balancing_utilization = ["${var.autoscaling_lb}"]
+  }
+}
+
+data "google_compute_zones" "available" {
+  project = "${var.project}"
+  region  = "${var.region}"
+}
+
+locals {
+  distribution_zones = {
+    default = ["${data.google_compute_zones.available.names}"]
+    user    = ["${var.distribution_policy_zones}"]
+  }
+
+}
+
+ distribution_policy_zones = ["${local.distribution_zones["${length(var.distribution_policy_zones) == 0 ? "default" : "user"}"]}"]
+
+
+
+
+
+
+
+variable module_enabled {
+  description = ""
+  default     = true
+}
+
+variable autoscaling {
+  description = "Enable autoscaling."
+  default     = false
+}
+
+variable max_replicas {
+  description = "Autoscaling, max replicas."
+  default     = 4
+}
+
+variable min_replicas {
+  description = "Autoscaling, min replics."
+  default     = 1
+}
+
+variable cooldown_period {
+  description = "Autoscaling, cooldown period in seconds."
+  default     = 60
+}
+
+variable autoscaling_cpu {
+  description = "Autoscaling, cpu utilization policy block as single element array. https://www.terraform.io/docs/providers/google/r/compute_autoscaler.html#cpu_utilization"
+  type        = list
+  default     = [0.5]
+}
+
+variable autoscaling_metric {
+  description = "Autoscaling, metric policy block as single element array. https://www.terraform.io/docs/providers/google/r/compute_autoscaler.html#metric"
+  type        = list
+  default     = []
+}
+
+variable autoscaling_lb {
+  description = "Autoscaling, load balancing utilization policy block as single element array. https://www.terraform.io/docs/providers/google/r/compute_autoscaler.html#load_balancing_utilization"
+  type        = list
+  default     = []
+}
+
+variable distribution_policy_zones {
+  description = "The distribution policy for this managed instance group when zonal=false. Default is all zones in given region."
+  type        = list
+  default     = []
+}
+
+variable machine_type {
+  description = "Machine type for the VMs in the instance group."
+  default     = "f1-micro"
+}
+
+variable "preemptible" {
+  description = "Use preemptible instances - lower price but short-lived instances. See https://cloud.google.com/compute/docs/instances/preemptible for more details"
+  default     = "false"
+}
+
+variable "automatic_restart" {
+  description = "Automatically restart the instance if terminated by GCP - Set to false if using preemptible instances"
+  default     = "true"
+}
+
+
+
+
+========== template
+  network_interface {
+    network            = "${var.subnetwork == "" ? var.network : ""}"
+    subnetwork         = "${var.subnetwork}"
+    access_config      = ["${var.access_config}"]
+    address            = "${var.network_ip}"
+    subnetwork_project = "${var.subnetwork_project == "" ? var.project : var.subnetwork_project}"
+  }
+  disk {
+    auto_delete  = "${var.disk_auto_delete}"
+    boot         = true
+    source_image = "${var.compute_image}"
+    type         = "PERSISTENT"
+    disk_type    = "${var.disk_type}"
+    disk_size_gb = "${var.disk_size_gb}"
+    mode         = "${var.mode}"
+  }
+  scheduling {
+    preemptible       = "${var.preemptible}"
+    automatic_restart = "${var.automatic_restart}"
+  }    
+=================
+
+======= MIG
+  target_size = "${var.autoscaling ? var.min_replicas : var.size}"
+
+  auto_healing_policies = {
+    health_check      = "${var.http_health_check ? element(concat(google_compute_health_check.mig-health-check.*.self_link, list("")), 0) : ""}"
+    initial_delay_sec = "${var.hc_initial_delay}"
+  }
+  
+^^^^^^^^^^^^
+  rolling_update_policy = ["${var.rolling_update_policy}"]
+
+  distribution_policy_zones = ["${local.distribution_zones["${length(var.distribution_policy_zones) == 0 ? "default" : "user"}"]}"]
+
+  
+  

@@ -7,3 +7,15 @@
     2. resource manager API (cloudresourcemanager.googleapis.com)
     3. IAM API (iam.googleapis.com)
 3. Test
+
+
+## Terra code to be added
+
+### VM
+
+* take image n family via code
+
+
+### Monitoring
+
+* add code to alerts
