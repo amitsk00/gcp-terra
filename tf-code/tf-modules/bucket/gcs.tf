@@ -1,20 +1,20 @@
 
 
 resource "google_storage_bucket" "first_bucket" {
-  project  = var.project_id
-  name     = "${var.project_id}-${var.first_suffix}"
-  location      = var.gcs_loc_us
-  force_destroy = true
+  project                  = var.project_id
+  name                     = "${var.project_id}-${var.first_suffix}"
+  location                 = var.gcs_loc_us
+  force_destroy            = true
   public_access_prevention = "enforced"
 
   autoclass {
     enabled = true
   }
 
-  
+
   lifecycle_rule {
     condition {
-      age = 300
+      age = 30
     }
     action {
       type = "Delete"
@@ -24,10 +24,10 @@ resource "google_storage_bucket" "first_bucket" {
 }
 
 resource "google_storage_bucket" "custom_bucket" {
-  project  = var.project_id
-  name          = "${var.project_id}-custom"
-  location      = var.gcs_loc_us
-  force_destroy = true
+  project                  = var.project_id
+  name                     = "${var.project_id}-custom"
+  location                 = var.gcs_loc_us
+  force_destroy            = true
   public_access_prevention = "enforced"
 
   autoclass {

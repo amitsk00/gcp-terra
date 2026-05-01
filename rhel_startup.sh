@@ -25,8 +25,8 @@ cd /opt/app
 
 ############
 # add code to put metadata and get value dynamically part
-gcloud storage cp gs://ask-proj-35-main/load_generator.py .
-gcloud storage cp gs://ask-proj-35-main/py_load.service .
+gcloud storage cp gs://proj-2026-main/load_generator.py .
+gcloud storage cp gs://proj-2026-main/py_load.service .
 
 echo -e "creating py related service"
 

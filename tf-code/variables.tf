@@ -154,12 +154,12 @@ variable "main_user" {
 
 
 variable "count_zonal_mig" {
-  type = number
+  type    = number
   default = 1
 }
 
 variable "count_regional_mig" {
-  type = number
+  type    = number
   default = 1
 }
 
@@ -191,7 +191,7 @@ variable "sa_list" {
 }
 
 
-variable "cicd_terra" {
+variable "cicd_build" {
   type        = string
   description = "CICD SA created to be used for Terraform"
 }
@@ -247,7 +247,7 @@ variable "py_image_1" {
   type        = string
   description = "Image for Python"
   default     = "python:3.8"
-  
+
 }
 
 
@@ -255,8 +255,8 @@ variable "py_image_1" {
 # VPC
 
 variable "vpc_name" {
-    type = string
-    description = "Name of 1st VPC"
+  type        = string
+  description = "Name of 1st VPC"
 }
 
 
@@ -336,23 +336,23 @@ variable "sa_core_viewer_email" {
 variable "sa_run_email" {
   type        = string
   description = "SA for Cloud Run"
-  default = "xx"
-  
+  default     = "xx"
+
 }
 
 variable "sa_vm_email" {
   type        = string
   description = "SA for GCE"
-  default = "xx"
-  
+  default     = "xx"
+
 }
 
 variable "metadata_vm" {
-    type = list(object({
-        key   = string
-        value = string
-    }))
-    default = []
+  type = list(object({
+    key   = string
+    value = string
+  }))
+  default = []
 }
 
 
@@ -423,7 +423,7 @@ variable "automatic_restart" {
 variable "create_gke" {
   description = "Create GKE service"
   default     = false
-  
+
 }
 
 ## Run
@@ -431,7 +431,7 @@ variable "create_gke" {
 variable "create_run" {
   description = "Create Cloud Run service"
   default     = false
-  
+
 }
 
 

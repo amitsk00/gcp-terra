@@ -50,10 +50,10 @@ echo -e "user and project set properly"
 
 
 PROJECT=${PROJECT_ID}
-ACCOUNT=${CICD_TERRA_SA}
+ACCOUNT=${cicd_build_SA}
 DESCR="CICD account using Terraform for IaC"
 CICD_EMAIL="${ACCOUNT}@${PROJECT}.iam.gserviceaccount.com"
-export CICD_TERRA_SA=${CICD_EMAIL}
+export cicd_build_SA=${CICD_EMAIL}
 DISPLAY_NAME="CICD for Terraform"
 
 
@@ -153,6 +153,7 @@ function create-first-bucket() {
     retGcs=$?
     set -e
 
+    echo -e "\n\n"
     if [[ "${retGcs}" -eq  "0"  ]]
     then
         echo -e "${PREFIX}${YELLOW}Terraform related Bucket exists${NC}"
@@ -170,9 +171,13 @@ if [[ "${isDayZero}" == "true" ]]; then
 fi 
 
 
-# enable required APIs before starting terraform
-gcloud services enable cloudresourcemanager.googleapis.com
 
+
+# enable required APIs before starting terraform
+for api in "${API_LIST[@]}"; do
+    echo -e "${PREFIX}${BLUE}Enabling API: ${api} ${NC}"
+    gcloud services enable "${api}"
+done
 
 
 # Set SA for Terraform
@@ -189,7 +194,7 @@ echo -e "${LINE_SEP}${BLUE}Setting up terraform ${NC}"
 #   -backend-config="bucket=${TF_VAR_terra_backend_gcs}" \
 #   -backend-config="prefix=${TF_VAR_terra_backend_prefix}"
 
-terraform init -upgrade 
+terraform init -upgrade -reconfigure
 
 
 
@@ -247,7 +252,10 @@ then
 
     set -x
     gcloud auth print-access-token | docker login -u oauth2accesstoken --password-stdin "https://${REGION}-docker.pkg.dev"
-    sudo docker push ${py_repo_url}/${PY_IMAGE_1}:latest
+    imageCount=$(docker images --filter=reference="${PY_IMAGE_1}:*"  | wc -l )
+    if [[ $imageCount -gt 1 ]]; then
+        sudo docker push ${py_repo_url}/${PY_IMAGE_1}:latest
+    fi 
     set +x
 
 

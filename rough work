@@ -1,16 +1,16 @@
-gcloud  storage ls --impersonate-service-account cicd-terra@ask-proj-35.iam.gserviceaccount.com
+gcloud  storage ls --impersonate-service-account cicd-build@proj-2026.iam.gserviceaccount.com
 
 
 
-│ Error: Error when reading or editing Project "ask-proj-35": Get "https://cloudresourcemanager.googleapis.com/v1/projects/ask-proj-35?alt=json&prettyPrint=false": impersonate: unable to generate access token: Post "https://iamcredentials.googleapis.com/v1/projects/-/serviceAccounts/cicd-terra@ask-proj-35.iam.gserviceaccount.com:generateAccessToken": oauth2: cannot fetch token: 400 Bad Request
+│ Error: Error when reading or editing Project "proj-2026": Get "https://cloudresourcemanager.googleapis.com/v1/projects/proj-2026?alt=json&prettyPrint=false": impersonate: unable to generate access token: Post "https://iamcredentials.googleapis.com/v1/projects/-/serviceAccounts/cicd-build@proj-2026.iam.gserviceaccount.com:generateAccessToken": oauth2: cannot fetch token: 400 Bad Request
 
 
 
-ask-proj-35
+proj-2026
 
-cicd-terra@ask-proj-35.iam.gserviceaccount.com
+cicd-build@proj-2026.iam.gserviceaccount.com
 
-│ Error: Error when reading or editing Project "ask-proj-35": googleapi: Error 403: Cloud Resource Manager API has not been used in project 699732611327 before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/cloudresourcemanager.googleapis.com/overview?project=699732611327 then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry.
+│ Error: Error when reading or editing Project "proj-2026": googleapi: Error 403: Cloud Resource Manager API has not been used in project 699732611327 before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/cloudresourcemanager.googleapis.com/overview?project=699732611327 then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry.
 
 
 gcloud services enable cloudresourcemanager.googleapis.com

@@ -8,7 +8,7 @@ zone                    = "${ZONE}"
 terra_backend_gcs       = "${GCS_TERRA}/"
 terra_backend_prefix    = "state"
 
-cicd_terra              = "${CICD_TERRA_SA}"
+cicd_build              = "${cicd_build_SA}"
 sa_core_viewer          = "${CORE_VIEWER}"
 sa_list                 = [
                         "test1234"  ,

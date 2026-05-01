@@ -43,9 +43,9 @@ fi
 
 
 PROJECT=${PROJECT_ID}
-ACCOUNT=${CICD_TERRA_SA}
+ACCOUNT=${cicd_build_SA}
 CICD_EMAIL="${ACCOUNT}@${PROJECT}.iam.gserviceaccount.com"
-export CICD_TERRA_SA=${CICD_EMAIL}
+export cicd_build_SA=${CICD_EMAIL}
 
 
 
@@ -74,5 +74,11 @@ if [[ "$?" -eq "0" ]]; then
     sleep 15
 fi 
 
+
+# disable some APIs 
+for api in "${API_LIST[@]}"; do
+    # echo -e "${PREFIX}${BLUE}Enabling API: ${api} ${NC}"
+    gcloud services disable "${api}"
+done
 
 ###################

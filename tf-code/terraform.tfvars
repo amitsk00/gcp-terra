@@ -1,14 +1,14 @@
-project_id                 = "ask-proj-35"
+project_id                 = "proj-2026"
 # credentials_file         = "<FILE>"
-main_user               = "amitsk.gcp.35@gmail.com"
+main_user               = "psoft.amit@gmail.com"
 
 region                  = "us-central1"
 zone                    = "us-central1-c"
 
-terra_backend_gcs       = "gs://ask-proj-35-terraform/"
+terra_backend_gcs       = "gs://proj-2026-terraform/"
 terra_backend_prefix    = "state"
 
-cicd_terra              = "cicd-terra"
+cicd_build              = "cicd-build"
 sa_core_viewer          = "gcp-core-viewer"
 sa_list                 = [
                         "test1234"  ,
@@ -57,7 +57,7 @@ mac_type_e2m            = "e2-medium"
 mac_type_f1m            = "f1-micro"
 vm_name                 = "test123"
 vm_image                = "debian-cloud/debian-11"
-startup_url             = "gs://ask-proj-35-main/rhel_startup.sh"
+startup_url             = "gs://proj-2026-main/rhel_startup.sh"
 metadata_vm             = [ ]
 
 

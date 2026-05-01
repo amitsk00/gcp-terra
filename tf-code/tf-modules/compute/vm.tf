@@ -1,56 +1,68 @@
 resource "google_compute_instance" "vm_template" {
-	name         = var.vm_name 
-	machine_type = var.mac_type_e2m
-	zone         = var.zone 
+  name         = var.vm_name
+  machine_type = var.mac_type_e2m
+  zone         = var.zone
 
-	tags = ["foo", "bar"]
+  tags = ["foo", "bar"]
 
-	boot_disk {
-		initialize_params {
-			image = var.vm_image
-			labels = {
-			my_label = "value"
-			}
-		}
-	}
+  boot_disk {
+    initialize_params {
+      image = var.vm_image
+      labels = {
+        my_label = "value"
+      }
+    }
+  }
 
-	# // Local SSD disk
-	# scratch_disk {
-	#   interface = "SCSI"
-	# }
+  # // Local SSD disk
+  # scratch_disk {
+  #   interface = "SCSI"
+  # }
 
-	network_interface {
-	network = var.vpc_name
-	subnetwork = var.subnet_name
+  network_interface {
+    network    = var.vpc_name
+    subnetwork = var.subnet_name
 
-	# access_config {
-	#   // Ephemeral public IP
-	# }
-	}
-
-
-	# dynamic "metadata_values" {
-	# 	for_each = var.metadata_vm
-	# 	content {
-	# 		key = metadata_values.value.key
-	# 		value = metadata_values.value.value
-	# 	}
-	# }
+    # access_config {
+    #   // Ephemeral public IP
+    # }
+  }
 
 
-	metadata_startup_script = var.startup_url
+  # dynamic "metadata_values" {
+  # 	for_each = var.metadata_vm
+  # 	content {
+  # 		key = metadata_values.value.key
+  # 		value = metadata_values.value.value
+  # 	}
+  # }
 
-	service_account {
-		# Google recommends custom service accounts that have cloud-platform scope and permissions granted via IAM Roles.
-		email  = var.sa_vm_email
-		scopes = ["cloud-platform"]
-	}
+
+  metadata_startup_script = var.startup_url
+
+  service_account {
+    # Google recommends custom service accounts that have cloud-platform scope and permissions granted via IAM Roles.
+    email  = var.sa_vm_email
+    scopes = ["cloud-platform"]
+  }
 }
 
 
 resource "time_sleep" "vm_startup_script" {
-  depends_on = [google_compute_instance.vm_template]
-  create_duration = "30s"
+  depends_on      = [google_compute_instance.vm_template]
+  create_duration = "120s"
 }
 
 
+resource "google_compute_snapshot" "vm_snapshot" {
+  name        = "${var.vm_name}-snapshot"
+  source_disk = google_compute_instance.vm_template.boot_disk[0].source
+  zone        = var.zone
+
+  depends_on = [time_sleep.vm_startup_script]
+}
+
+resource "google_compute_image" "vm_custom_image" {
+  name            = "${var.vm_name}-custom-image"
+  source_snapshot = google_compute_snapshot.vm_snapshot.id
+}

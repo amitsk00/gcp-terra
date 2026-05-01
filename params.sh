@@ -1,13 +1,22 @@
 
 
 # change project and gmail ID for new ID
-export PROJECT_ID="ask-proj-35"
+export PROJECT_ID="proj-2026"
 export PROJECT_NUMBER=$(gcloud projects describe  ${PROJECT_ID} --format="value(projectNumber)" )
-export USER="amitsk.gcp.35@gmail.com"
+# export USER="amitsk.gcp.35@gmail.com"
+export USER="psoft.amit@gmail.com"
 
 
 # Generic
 export isDayZero=false
+
+
+
+# Define the list of required APIs in an array
+export API_LIST=(
+    "cloudresourcemanager.googleapis.com"
+    "iamcredentials.googleapis.com"
+)
 
 export COUNT_ZONAL_MIG=1
 export COUNT_REGIONAL_MIG=0
@@ -19,7 +28,7 @@ export REGION="us-central1"
 export ZONE="us-central1-c"
 
 export CORE_VIEWER="gcp-core-viewer"
-export CICD_TERRA_SA="cicd-terra"
+export cicd_build_SA="cicd-build"
 
 
 # GCS

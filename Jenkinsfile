@@ -6,9 +6,9 @@ pipeline {
         GCP_SETUP_CREDS = 'false'
         GCP_SETUP_KEYFILE = 'true'
 
-        PROJECT_ID = 'ask-proj-35'
+        PROJECT_ID = 'proj-2026'
         REGION = 'us-central1'
-        SA_NAME = 'cicd-terra@ask-proj-35.iam.gserviceaccount.com'
+        SA_NAME = 'cicd-build@proj-2026.iam.gserviceaccount.com'
         KEY_FILE_PATH = '/home/amit/sandbox/gcp-ask-proj-25'
         KEY_FILE_NAME = 'key.json'
         
@@ -37,7 +37,7 @@ pipeline {
                 expression { return env.GCP_SETUP_CREDS == 'true' }
             }            
             steps {
-                withCredentials([file(credentialsId: 'cicd_terra_key', variable: 'KEY_FILE')]) {
+                withCredentials([file(credentialsId: 'cicd_build_key', variable: 'KEY_FILE')]) {
                 
                     sh '''
                         gcloud auth activate-service-account --key-file=$KEY_FILE_NAME 
