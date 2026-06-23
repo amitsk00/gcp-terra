@@ -18,6 +18,8 @@ sa_list                 = [
 
 
 # Count and enabling if more than 0
+mig_zonal_enabled = ${migZonal}
+mig_regional_enabled = ${migRegional}
 count_zonal_mig  = ${COUNT_ZONAL_MIG}
 count_regional_mig = ${COUNT_REGIONAL_MIG}
 create_run = ${CREATE_RUN}

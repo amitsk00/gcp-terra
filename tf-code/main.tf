@@ -129,10 +129,12 @@ module "project-vm" {
   sa_vm_email          = module.project-init.sa_vm_email
 
 
-  count_regional_mig = var.count_regional_mig
-  count_zonal_mig    = var.count_zonal_mig
-  create_run         = var.create_run
-  create_gke         = var.create_gke
+  count_regional_mig   = var.count_regional_mig
+  count_zonal_mig      = var.count_zonal_mig
+  mig_zonal_enabled    = var.mig_zonal_enabled
+  mig_regional_enabled = var.mig_regional_enabled
+  create_run           = var.create_run
+  create_gke           = var.create_gke
 
 
   autoscaling     = var.autoscaling

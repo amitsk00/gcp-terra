@@ -1,17 +1,40 @@
 
 
 locals {
-  sa_for_vm = one([for item in var.sa_list : item if can(regex("vm", item))])
+  distribution_zones = {
+    default = ["${data.google_compute_zones.available.names}"]
+    user    = ["${var.distribution_policy_zones}"]
+  }
 
+
+  zonal_mig    = google_compute_instance_group_manager.mig_zonal[*].name
+  regional_mig = google_compute_region_instance_group_manager.mig_regional[*].name
+
+  sa_for_vm   = one([for item in var.sa_list : item if can(regex("vm", item))])
   sa_email_vm = one([for item in var.sa_email_list : item if can(regex("vm", item))])
+
 }
 
+
+
+
+
+
+
+data "google_compute_zones" "available" {
+  project = var.project_id
+  region  = var.region
+}
 
 
 data "google_compute_image" "my_image" {
   family  = "debian-11"
   project = "debian-cloud"
 }
+
+
+
+
 
 resource "google_compute_disk" "foobar" {
   name  = "existing-disk"
@@ -40,7 +63,7 @@ resource "google_compute_instance_template" "lb-mig-tmpl" {
 
   metadata = {
     foo                = "bar",
-    startup-script-url = "gs://proj-2026-main/rhel_startup.sh"
+    startup-script-url = "gs://${var.project_id}-main/rhel_startup.sh"
   }
 
   instance_description = "LB related "
@@ -116,7 +139,7 @@ resource "google_compute_health_check" "autohealing_mig" {
 
 
 resource "google_compute_instance_group_manager" "mig_zonal" {
-  count = var.count_zonal_mig
+  count = var.mig_zonal_enabled ? var.count_zonal_mig : 0
 
   provider = google-beta
   name     = "mig-zonal"
@@ -174,7 +197,7 @@ resource "google_compute_instance_group_manager" "mig_zonal" {
 
 
 resource "google_compute_region_instance_group_manager" "mig_regional" {
-  count = var.count_regional_mig
+  count = var.mig_regional_enabled ? var.count_regional_mig : 0
 
   provider = google-beta
   name     = "mig-regional"
@@ -234,26 +257,6 @@ resource "google_compute_region_instance_group_manager" "mig_regional" {
 
 # Autoscalar config, for zonal and regional both
 
-data "google_compute_zones" "available" {
-  project = var.project_id
-  region  = var.region
-}
-
-locals {
-  distribution_zones = {
-    default = ["${data.google_compute_zones.available.names}"]
-    user    = ["${var.distribution_policy_zones}"]
-  }
-
-
-  zonal_mig    = google_compute_instance_group_manager.mig_zonal[*].name
-  regional_mig = google_compute_region_instance_group_manager.mig_regional[*].name
-
-}
-
-
-
-
 resource "google_compute_autoscaler" "scalar_zonal" {
   provider = google-beta
   count    = var.mig_zonal_enabled && var.autoscaling ? 1 : 0
@@ -282,10 +285,10 @@ resource "google_compute_region_autoscaler" "scalar_regional" {
 
   provider = google-beta
   count    = var.mig_regional_enabled && var.autoscaling ? 1 : 0
-  name     = local.regional_mig
+  name     = local.regional_mig[0]
   region   = var.region
   project  = var.project_id
-  target   = local.regional_mig
+  target   = local.regional_mig[0]
 
 
   autoscaling_policy {

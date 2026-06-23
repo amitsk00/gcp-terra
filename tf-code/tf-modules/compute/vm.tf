@@ -1,3 +1,6 @@
+
+
+
 resource "google_compute_instance" "vm_template" {
   name         = var.vm_name
   machine_type = var.mac_type_e2m
@@ -13,6 +16,8 @@ resource "google_compute_instance" "vm_template" {
       }
     }
   }
+
+  resource_policies = [google_compute_resource_policy.stop_vm_daily.id]
 
   # // Local SSD disk
   # scratch_disk {
@@ -65,4 +70,17 @@ resource "google_compute_snapshot" "vm_snapshot" {
 resource "google_compute_image" "vm_custom_image" {
   name            = "${var.vm_name}-custom-image"
   source_snapshot = google_compute_snapshot.vm_snapshot.id
+}
+
+resource "google_compute_resource_policy" "stop_vm_daily" {
+  name        = "${var.vm_name}-stop-policy"
+  region      = var.region
+  description = "Stop VM at 6 PM every day"
+
+  instance_schedule_policy {
+    vm_stop_schedule {
+      schedule = "0 15 * * *" # Runs at 18:00 (6 PM)
+    }
+    time_zone = "UTC" # Change to your preferred time zone, e.g., "America/New_York"
+  }
 }

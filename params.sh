@@ -9,6 +9,8 @@ export USER="psoft.amit@gmail.com"
 
 # Generic
 export isDayZero=false
+export migZonal=false
+export migRegional=false
 
 
 

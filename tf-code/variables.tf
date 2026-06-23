@@ -9,6 +9,13 @@ variable "mig_regional_enabled" {
   default     = false
 }
 
+
+
+
+
+
+
+
 variable "project_id" {}
 
 variable "credentials_file" {
